@@ -157,6 +157,9 @@ SOFTWARE.
 
 #pragma region Parameters
 
+/**
+ * @brief Number of the programable LEDs at the board.
+ */
 #define LED_COUNT  2
 
 #pragma endregion

@@ -20,6 +20,10 @@
     {
       "name": "Adafruit_NeoPixel",
       "platform": "esp32"
+    },
+    {
+      "name": "Adafruit_MCP23008",
+      "platform": "esp32"
     }
   ],
   "headers": ""

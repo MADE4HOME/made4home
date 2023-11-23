@@ -162,6 +162,8 @@ SOFTWARE.
  */
 #define LED_COUNT  2
 
+#define IO_EXPANDER_ADDRESS 0x20
+
 #pragma endregion
 
 #endif

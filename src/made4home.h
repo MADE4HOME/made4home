@@ -162,8 +162,105 @@ SOFTWARE.
  */
 #define LED_COUNT  2
 
+#define LED_BRIGHTNESS 255
+
 #define IO_EXPANDER_ADDRESS 0x20
 
 #pragma endregion
+
+#pragma region Headers
+
+#include <Wire.h>
+
+#include <Adafruit_NeoPixel.h> // Click here to get the library: http://librarymanager/All#Adafruit_NeoPixel
+
+#include <Adafruit_MCP23008.h> // Click here to get the library: http://librarymanager/All#Adafruit_MCP23008
+
+#pragma endregion
+
+/**
+ * @brief Made4Home IO board abstraction class.
+ * 
+ */
+class Made4Home_t
+{
+    protected:
+
+        /** 
+         * @brief Blink timer instance.
+         */
+        Adafruit_NeoPixel *m_LEDs;
+
+        /**
+         * @brief Two Wire Interface with index 0.
+         */
+        TwoWire *m_TWIOne;
+
+        /**
+         * @brief MCP IO chip abstraction instance.
+         */
+        Adafruit_MCP23008 *m_MCP;
+
+    public:
+
+        /**
+         * @brief Setup the IO board.
+         * 
+         */
+        void setup();
+
+        /**
+         * @brief Set the color of the LEDs.
+         * 
+         * @param index Index of the LEDs [0-1]
+         * @param r Red color. [0-255]
+         * @param g Green color [0-255]
+         * @param b Blue color [0-255]
+         * @return * void 
+         */
+        void setLED(int index, int r, int g, int b);
+
+        /**
+         * @brief Set the color of the L1 LED.
+         * 
+         * @param r Red color. [0-255]
+         * @param g Green color [0-255]
+         * @param b Blue color [0-255]
+         * @return * void 
+         */
+        void setL1(int r, int g, int b);
+
+        /**
+         * @brief Set the color of the L2 LED.
+         * 
+         * @param r Red color. [0-255]
+         * @param g Green color [0-255]
+         * @param b Blue color [0-255]
+         * @return * void 
+         */
+        void setL2(int r, int g, int b);
+        
+        /**
+         * @brief Read the digital inputs of the IO board.
+         * 
+         * @param pin Pin number [PIN_IN_1 .. 4]
+         * @return int Returns HIGH or LOW.
+         */
+        int digitalRead(int pin);
+
+        /**
+         * @brief Write to the relay outputs of the IO board.
+         * 
+         * @param pin Pin number [PIN_RELAY_1 .. 4]
+         * @param state HIGH or LOW
+         */
+        void digitalWrite(int pin, int state);
+};
+
+/**
+ * @brief Instance of the IO board abstraction.
+ * 
+ */
+extern Made4Home_t Made4Home;
 
 #endif

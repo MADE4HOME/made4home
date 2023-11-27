@@ -178,6 +178,8 @@ SOFTWARE.
 
 #pragma endregion
 
+#pragma region Classes
+
 /**
  * @brief Made4Home IO board abstraction class.
  * 
@@ -257,10 +259,16 @@ class Made4Home_t
         void digitalWrite(int pin, int state);
 };
 
+#pragma endregion
+
+#pragma region Instance
+
 /**
  * @brief Instance of the IO board abstraction.
  * 
  */
 extern Made4Home_t Made4Home;
+
+#pragma endregion
 
 #endif

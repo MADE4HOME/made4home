@@ -34,9 +34,12 @@ SOFTWARE.
 
 #pragma region Headers
 
-#include "made4home.h"
+#include <Wire.h>
 
+#include "made4home.h"
 #include "FxTimer.h"
+
+#include <Adafruit_MCP23008.h> // Click here to get the library: http://librarymanager/All#Adafruit_MCP23008
 
 #pragma endregion
 
@@ -46,6 +49,10 @@ SOFTWARE.
  * @brief Blink timer instance.
  */
 FxTimer *UpdateTimer_g;
+
+TwoWire *TWIOne_g;
+
+Adafruit_MCP23008 *MCP_g;
 
 #pragma endregion
 
@@ -59,7 +66,31 @@ void setup()
 	UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL);
 	UpdateTimer_g->updateLastTime();
   
-  Made4Home.setup();
+  //
+  TWIOne_g = new TwoWire(0);
+  TWIOne_g->begin(PIN_SDA_1, PIN_SCL_1);
+
+  //
+  MCP_g = new Adafruit_MCP23008();
+
+  //
+  if (!MCP_g->begin(IO_EXPANDER_ADDRESS, TWIOne_g))
+  {
+    Serial.println("MCP23008 Error.");
+    for (;;)
+    {
+      // Stop
+    }
+  }
+
+    MCP_g->pinMode(PIN_RELAY_1, OUTPUT);
+    MCP_g->pinMode(PIN_RELAY_2, OUTPUT);
+    MCP_g->pinMode(PIN_RELAY_3, OUTPUT);
+    MCP_g->pinMode(PIN_RELAY_4, OUTPUT);
+    MCP_g->pinMode(PIN_IN_1, INPUT);
+    MCP_g->pinMode(PIN_IN_2, INPUT);
+    MCP_g->pinMode(PIN_IN_3, INPUT);
+    MCP_g->pinMode(PIN_IN_4, INPUT);
 }
 
 void loop()
@@ -71,9 +102,9 @@ void loop()
     UpdateTimer_g->clear();
 
     // Update the output states via input states.
-    Made4Home.digitalWrite(PIN_RELAY_1, (0 == Made4Home.digitalRead(PIN_IN_1)));
-    Made4Home.digitalWrite(PIN_RELAY_2, (0 == Made4Home.digitalRead(PIN_IN_2)));
-    Made4Home.digitalWrite(PIN_RELAY_3, (0 == Made4Home.digitalRead(PIN_IN_3)));
-    Made4Home.digitalWrite(PIN_RELAY_4, (0 == Made4Home.digitalRead(PIN_IN_4)));
+    MCP_g->digitalWrite(PIN_RELAY_1, (0 == MCP_g->digitalRead(PIN_IN_1)));
+    MCP_g->digitalWrite(PIN_RELAY_2, (0 == MCP_g->digitalRead(PIN_IN_2)));
+    MCP_g->digitalWrite(PIN_RELAY_3, (0 == MCP_g->digitalRead(PIN_IN_3)));
+    MCP_g->digitalWrite(PIN_RELAY_4, (0 == MCP_g->digitalRead(PIN_IN_4)));
   }
 }

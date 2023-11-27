@@ -37,6 +37,8 @@ SOFTWARE.
 #include "made4home.h"
 #include "FxTimer.h"
 
+#include <Adafruit_NeoPixel.h> // Click here to get the library: http://librarymanager/All#Adafruit_NeoPixel
+
 #pragma endregion
 
 #pragma region Variables
@@ -45,6 +47,11 @@ SOFTWARE.
  * @brief Blink timer instance.
  */
 FxTimer *BlinkTimer_g;
+
+/** 
+ * @brief Blink timer instance.
+ */
+Adafruit_NeoPixel *LEDs_g;
 
 /** 
  * @brief Blink LED state counter.
@@ -60,8 +67,18 @@ void setup()
 	BlinkTimer_g->setExpirationTime(BLINK_INTERVAL);
 	BlinkTimer_g->updateLastTime();
 
-    // Setup the IO board.
-    Made4Home.setup();
+    // Create the object.
+    LEDs_g = new Adafruit_NeoPixel(LED_COUNT, PIN_LEDs, NEO_GRB + NEO_KHZ800);
+    
+    // Init NeoPixel strip object (REQUIRED)
+    LEDs_g->begin();
+    LEDs_g->show();
+
+    // Set brightness to about. (max = 255)
+    LEDs_g->setBrightness(BRIGHTNESS);
+    LEDs_g->setPixelColor(0, 0, 0, 0);
+    LEDs_g->setPixelColor(1, 0, 0, 0);
+    LEDs_g->show();
 
     // Reset the state.
     State_g = 0;
@@ -75,39 +92,40 @@ void loop()
     BlinkTimer_g->updateLastTime();
     BlinkTimer_g->clear();
 
-    // set the LED with the State_g of the variable:
+    // set the LED with the StateStatusLED_g of the variable:
     if (State_g == 0)
     {
-        Made4Home.setL1(0, 0, 0);
-        Made4Home.setL2(0, 0, 0);
+        LEDs_g->setPixelColor(0, 0, 0, 0);
+        LEDs_g->setPixelColor(1, 0, 0, 0);
     }
     else if (State_g == 1)
     {
-        Made4Home.setL1(BRIGHTNESS, 0, 0);
-        Made4Home.setL2(BRIGHTNESS, 0, 0);
+        LEDs_g->setPixelColor(0, 255, 0, 0);
+        LEDs_g->setPixelColor(1, 255, 0, 0);
     }
     else if (State_g == 2)
     {
-        Made4Home.setL1(0, BRIGHTNESS, 0);
-        Made4Home.setL2(0, BRIGHTNESS, 0);
+        LEDs_g->setPixelColor(0, 0, 255, 0);
+        LEDs_g->setPixelColor(1, 0, 255, 0);
     }
     else if (State_g == 3)
     {
-        Made4Home.setL1(0, 0, BRIGHTNESS);
-        Made4Home.setL2(0, 0, BRIGHTNESS);
+        LEDs_g->setPixelColor(0, 0, 0, 255);
+        LEDs_g->setPixelColor(1, 0, 0, 255);
     }
     else if (State_g == 4)
     {
-        Made4Home.setL1(BRIGHTNESS, BRIGHTNESS, BRIGHTNESS);
-        Made4Home.setL2(BRIGHTNESS, BRIGHTNESS, BRIGHTNESS);
+        LEDs_g->setPixelColor(0, 255, 255, 255);
+        LEDs_g->setPixelColor(1, 255, 255, 255);
     }
     else
     {
-        Made4Home.setL1(0, 0, 0);
-        Made4Home.setL2(0, 0, 0);
+        LEDs_g->setPixelColor(0, 0, 0, 0);
+        LEDs_g->setPixelColor(1, 0, 0, 0);
         State_g = 0;
     }
 
+    LEDs_g->show();
     State_g++;
   }
 }

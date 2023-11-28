@@ -137,7 +137,7 @@ int Made4Home_t::digitalRead(int pin)
  */
 void Made4Home_t::digitalWrite(int pin, int state)
 {
-    if (pin < PIN_RELAY_4 || pin > PIN_RELAY_1)
+    if (pin < PIN_RELAY_1 || pin > PIN_RELAY_4)
     {
         return;
     }

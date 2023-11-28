@@ -42,71 +42,37 @@ SOFTWARE.
 
 #pragma region Variables
 
+/**
+ * @brief Ethernet connection state.
+ * 
+ */
+static bool EthernetConnected_g = false;
+
 /** 
  * @brief Blink timer instance.
  */
 FxTimer *BlinkTimer_g;
 
-static bool eth_connected_g = false;
-
 #pragma endregion
 
-void wifi_event(WiFiEvent_t event)
-{
-    switch (event) {
-    case ARDUINO_EVENT_ETH_START:
-        Serial.println("ETH Started");
-        //set eth hostname here
-        ETH.setHostname("esp32-ethernet");
-        break;
-    case ARDUINO_EVENT_ETH_CONNECTED:
-        Serial.println("ETH Connected");
-        break;
-    case ARDUINO_EVENT_ETH_GOT_IP:
-        Serial.print("ETH MAC: ");
-        Serial.print(ETH.macAddress());
-        Serial.print(", IPv4: ");
-        Serial.print(ETH.localIP());
-        if (ETH.fullDuplex()) {
-            Serial.print(", FULL_DUPLEX");
-        }
-        Serial.print(", ");
-        Serial.print(ETH.linkSpeed());
-        Serial.println("Mbps");
-        eth_connected_g = true;
-        break;
-    case ARDUINO_EVENT_ETH_DISCONNECTED:
-        Serial.println("ETH Disconnected");
-        eth_connected_g = false;
-        break;
-    case ARDUINO_EVENT_ETH_STOP:
-        Serial.println("ETH Stopped");
-        eth_connected_g = false;
-        break;
-    default:
-        break;
-    }
-}
+#pragma region Prototypes
 
-void test_client(const char* host, uint16_t port)
-{
-    Serial.print("\nconnecting to ");
-    Serial.println(host);
+/**
+ * @brief Network event state handler.
+ * 
+ * @param event Event input.
+ */
+void wifi_event(WiFiEvent_t event);
 
-    WiFiClient client;
-    if (!client.connect(host, port)) {
-        Serial.println("connection failed");
-        return;
-    }
-    client.printf("GET / HTTP/1.1\r\nHost: %s\r\n\r\n", host);
-    while (client.connected() && !client.available());
-    while (client.available()) {
-        Serial.write(client.read());
-    }
+/**
+ * @brief Do HTTP request.
+ * 
+ * @param host Host
+ * @param port Port
+ */
+void do_client(const char* host, uint16_t port);
 
-    Serial.println("closing connection\n");
-    client.stop();
-}
+#pragma endregion
 
 void setup()
 {
@@ -139,9 +105,83 @@ void loop()
     BlinkTimer_g->updateLastTime();
     BlinkTimer_g->clear();
 
-    if (eth_connected_g)
+    if (EthernetConnected_g)
     {
-        test_client("google.com", 80);
+        do_client("google.com", 80);
     }
   }
 }
+
+#pragma region Functions
+
+/**
+ * @brief Network event state handler.
+ * 
+ * @param event Event input.
+ */
+void wifi_event(WiFiEvent_t event)
+{
+    switch (event)
+    {
+    case ARDUINO_EVENT_ETH_START:
+        Serial.println("ETH Started");
+        //set eth hostname here
+        ETH.setHostname("made4home");
+        break;
+    case ARDUINO_EVENT_ETH_CONNECTED:
+        Serial.println("ETH Connected");
+        break;
+    case ARDUINO_EVENT_ETH_GOT_IP:
+        Serial.print("ETH MAC: ");
+        Serial.print(ETH.macAddress());
+        Serial.print(", IPv4: ");
+        Serial.print(ETH.localIP());
+        if (ETH.fullDuplex())
+        {
+            Serial.print(", FULL_DUPLEX");
+        }
+        Serial.print(", ");
+        Serial.print(ETH.linkSpeed());
+        Serial.println("Mbps");
+        EthernetConnected_g = true;
+        break;
+    case ARDUINO_EVENT_ETH_DISCONNECTED:
+        Serial.println("ETH Disconnected");
+        EthernetConnected_g = false;
+        break;
+    case ARDUINO_EVENT_ETH_STOP:
+        Serial.println("ETH Stopped");
+        EthernetConnected_g = false;
+        break;
+    default:
+        break;
+    }
+}
+
+/**
+ * @brief Do HTTP request.
+ * 
+ * @param host Host
+ * @param port Port
+ */
+void do_client(const char* host, uint16_t port)
+{
+    Serial.print("\nconnecting to ");
+    Serial.println(host);
+
+    WiFiClient client;
+    if (!client.connect(host, port)) {
+        Serial.println("connection failed");
+        return;
+    }
+    client.printf("GET / HTTP/1.1\r\nHost: %s\r\n\r\n", host);
+    while (client.connected() && !client.available());
+    while (client.available()) {
+        Serial.write(client.read());
+    }
+
+    Serial.println("closing connection\n");
+    client.stop();
+}
+
+#pragma endregion

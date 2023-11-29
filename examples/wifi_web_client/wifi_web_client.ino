@@ -45,9 +45,9 @@ SOFTWARE.
 #pragma region Variables
 
 /** 
- * @brief Blink timer instance.
+ * @brief Update timer instance.
  */
-FxTimer *BlinkTimer_g;
+FxTimer *UpdateTimer_g;
 
 /**
  * @brief Replace with your network credentials.
@@ -78,9 +78,9 @@ void do_client(const char* host, uint16_t port);
 void setup()
 {
   	// Setup the blink timer.
-	BlinkTimer_g = new FxTimer();
-	BlinkTimer_g->setExpirationTime(UPDATE_INTERVAL);
-	BlinkTimer_g->updateLastTime();
+	UpdateTimer_g = new FxTimer();
+	UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL);
+	UpdateTimer_g->updateLastTime();
 
     // Setup the serial port.
     Serial.begin(115200, SERIAL_8N1);
@@ -102,11 +102,11 @@ void setup()
 
 void loop()
 {
-  BlinkTimer_g->update();
-  if(BlinkTimer_g->expired())
+  UpdateTimer_g->update();
+  if(UpdateTimer_g->expired())
   {
-    BlinkTimer_g->updateLastTime();
-    BlinkTimer_g->clear();
+    UpdateTimer_g->updateLastTime();
+    UpdateTimer_g->clear();
 
     do_client("google.com", 80);
   }

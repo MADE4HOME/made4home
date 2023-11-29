@@ -12,6 +12,7 @@ We will provide a links to libraries that we chose. The reasons to chose this li
  - [LEDs](https://github.com/adafruit/Adafruit_NeoPixel)
  - [Crypto Module](https://github.com/sparkfun/SparkFun_ATECCX08a_Arduino_Library)
  - [RS485 Interface](https://github.com/eModbus/eModbus)
+ - [MQTT Client](https://github.com/knolleary/pubsubclient)
 
 ## Examples
 
@@ -22,9 +23,10 @@ The examples covers the most popular communication topics and IOs options that m
  - [Opto inputs](https://github.com/MADE4HOME/made4home/blob/develop/examples/relays_inputs/relays_inputs.ino)
  - [ETH HTTP client](https://github.com/MADE4HOME/made4home/blob/develop/examples/ethernet_web_client/ethernet_web_client.ino)
  - [ETH HTTP server](https://github.com/MADE4HOME/made4home/blob/develop/examples/ethernet_web_server/ethernet_web_server.ino)
+ - [ETH MQTT client]()
  - [WiFi HTTP client](https://github.com/MADE4HOME/made4home/blob/develop/examples/wifi_web_client/wifi_web_client.ino)
  - [WiFi HTTP server](https://github.com/MADE4HOME/made4home/blob/develop/examples/wifi_web_server/wifi_web_server.ino)
- - [MQTT client]()
+ - [WiFi MQTT client]()
  - [RS485 MODBUS Master]()
  - [RS485 MODBUS Slave]()
 

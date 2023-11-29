@@ -189,7 +189,7 @@ class Made4Home_t
     protected:
 
         /** 
-         * @brief Blink timer instance.
+         * @brief NEO pixel instance.
          */
         Adafruit_NeoPixel *m_LEDs;
 

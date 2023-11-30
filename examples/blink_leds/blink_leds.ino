@@ -42,9 +42,9 @@ SOFTWARE.
 #pragma region Variables
 
 /** 
- * @brief Blink timer instance.
+ * @brief Update timer instance.
  */
-FxTimer *BlinkTimer_g;
+FxTimer *UpdateTimer_g;
 
 /** 
  * @brief Blink LED state counter.
@@ -56,9 +56,9 @@ uint8_t State_g;
 void setup()
 {
 	// Setup the blink timer.
-	BlinkTimer_g = new FxTimer();
-	BlinkTimer_g->setExpirationTime(BLINK_INTERVAL);
-	BlinkTimer_g->updateLastTime();
+	UpdateTimer_g = new FxTimer();
+	UpdateTimer_g->setExpirationTime(BLINK_INTERVAL);
+	UpdateTimer_g->updateLastTime();
 
     // Setup the IO board.
     Made4Home.setup();
@@ -69,11 +69,11 @@ void setup()
 
 void loop()
 {
-  BlinkTimer_g->update();
-  if(BlinkTimer_g->expired())
+  UpdateTimer_g->update();
+  if(UpdateTimer_g->expired())
   {
-    BlinkTimer_g->updateLastTime();
-    BlinkTimer_g->clear();
+    UpdateTimer_g->updateLastTime();
+    UpdateTimer_g->clear();
 
     // set the LED with the State_g of the variable:
     if (State_g == 0)

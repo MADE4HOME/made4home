@@ -166,6 +166,10 @@ SOFTWARE.
 
 #define IO_EXPANDER_ADDRESS 0x20
 
+#define STATE_ON "on"
+
+#define STATE_OFF "off"
+
 #pragma endregion
 
 #pragma region Headers

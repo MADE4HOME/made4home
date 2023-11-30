@@ -43,7 +43,7 @@ SOFTWARE.
 #pragma region Variables
 
 /** 
- * @brief Blink timer instance.
+ * @brief Update timer instance.
  */
 FxTimer *UpdateTimer_g;
 

@@ -44,12 +44,12 @@ SOFTWARE.
 #pragma region Variables
 
 /** 
- * @brief Blink timer instance.
+ * @brief Update timer instance.
  */
-FxTimer *BlinkTimer_g;
+FxTimer *UpdateTimer_g;
 
 /** 
- * @brief Blink timer instance.
+ * @brief Update timer instance.
  */
 Adafruit_NeoPixel *LEDs_g;
 
@@ -63,9 +63,9 @@ uint8_t State_g;
 void setup()
 {
 	// Setup the blink timer.
-	BlinkTimer_g = new FxTimer();
-	BlinkTimer_g->setExpirationTime(BLINK_INTERVAL);
-	BlinkTimer_g->updateLastTime();
+	UpdateTimer_g = new FxTimer();
+	UpdateTimer_g->setExpirationTime(BLINK_INTERVAL);
+	UpdateTimer_g->updateLastTime();
 
     // Create the object.
     LEDs_g = new Adafruit_NeoPixel(LED_COUNT, PIN_LEDs, NEO_GRB + NEO_KHZ800);
@@ -86,11 +86,11 @@ void setup()
 
 void loop()
 {
-  BlinkTimer_g->update();
-  if(BlinkTimer_g->expired())
+  UpdateTimer_g->update();
+  if(UpdateTimer_g->expired())
   {
-    BlinkTimer_g->updateLastTime();
-    BlinkTimer_g->clear();
+    UpdateTimer_g->updateLastTime();
+    UpdateTimer_g->clear();
 
     // set the LED with the StateStatusLED_g of the variable:
     if (State_g == 0)

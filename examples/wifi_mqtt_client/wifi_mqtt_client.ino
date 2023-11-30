@@ -30,6 +30,10 @@ SOFTWARE.
 
 // #define SECURE_MQTT
 
+#define STATE_ON "on"
+
+#define STATE_OFF "off"
+
 #pragma endregion
 
 #pragma region Headers
@@ -311,14 +315,14 @@ void mqtt_msg_cb(char *topic, byte *payload, unsigned int length)
     if (String(topic) == Output1Topic_g)
     {
         Serial.print("Changing output 1 to ");
-        if(messageTemp == "on")
+        if(messageTemp == STATE_ON)
         {
-            Serial.println("on");
+            Serial.println(STATE_ON);
             Made4Home.digitalWrite(PIN_RELAY_1, HIGH);
         }
-        else if(messageTemp == "off")
+        else if(messageTemp == STATE_OFF)
         {
-            Serial.println("off");
+            Serial.println(STATE_OFF);
             Made4Home.digitalWrite(PIN_RELAY_1, LOW);
         }
     }
@@ -327,14 +331,14 @@ void mqtt_msg_cb(char *topic, byte *payload, unsigned int length)
     else if (String(topic) == Output2Topic_g)
     {
         Serial.print("Changing output 2 to ");
-        if(messageTemp == "on")
+        if(messageTemp == STATE_ON)
         {
-            Serial.println("on");
+            Serial.println(STATE_ON);
             Made4Home.digitalWrite(PIN_RELAY_2, HIGH);
         }
-        else if(messageTemp == "off")
+        else if(messageTemp == STATE_OFF)
         {
-            Serial.println("off");
+            Serial.println(STATE_OFF);
             Made4Home.digitalWrite(PIN_RELAY_2, LOW);
         }
     }
@@ -343,14 +347,14 @@ void mqtt_msg_cb(char *topic, byte *payload, unsigned int length)
     else if (String(topic) == Output3Topic_g)
     {
         Serial.print("Changing output 3 to ");
-        if(messageTemp == "on")
+        if(messageTemp == STATE_ON)
         {
-            Serial.println("on");
+            Serial.println(STATE_ON);
             Made4Home.digitalWrite(PIN_RELAY_3, HIGH);
         }
-        else if(messageTemp == "off")
+        else if(messageTemp == STATE_OFF)
         {
-            Serial.println("off");
+            Serial.println(STATE_OFF);
             Made4Home.digitalWrite(PIN_RELAY_3, LOW);
         }
     }
@@ -359,14 +363,14 @@ void mqtt_msg_cb(char *topic, byte *payload, unsigned int length)
     else if (String(topic) == Output4Topic_g)
     {
         Serial.print("Changing output 4 to ");
-        if(messageTemp == "on")
+        if(messageTemp == STATE_ON)
         {
-            Serial.println("on");
+            Serial.println(STATE_ON);
             Made4Home.digitalWrite(PIN_RELAY_4, HIGH);
         }
-        else if(messageTemp == "off")
+        else if(messageTemp == STATE_OFF)
         {
-            Serial.println("off");
+            Serial.println(STATE_OFF);
             Made4Home.digitalWrite(PIN_RELAY_4, LOW);
         }
     }

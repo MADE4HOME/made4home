@@ -54,7 +54,7 @@ Later of development of the internet and internet of things industry brings to t
 
  - [WiFi HTTP client](https://github.com/MADE4HOME/made4home/blob/develop/examples/wifi_web_client/wifi_web_client.ino)
  - [WiFi HTTP server](https://github.com/MADE4HOME/made4home/blob/develop/examples/wifi_web_server/wifi_web_server.ino)
- - [WiFi MQTT client](https://github.com/MADE4HOME/made4home/blob/develop/examples/wifi_web_server/wifi_mqtt_clients.ino)
+ - [WiFi MQTT client](https://github.com/MADE4HOME/made4home/blob/develop/examples/wifi_mqtt_clients/wifi_mqtt_clients.ino)
 
 ### Modbus
 

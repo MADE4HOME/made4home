@@ -176,7 +176,7 @@ void setup()
     // MQTT client.
     MQTTClient_g = new PubSubClient(WiFiClient_g);
 
-  	// Setup the blink timer.
+  	// Setup the update timer.
 	UpdateTimer_g = new FxTimer();
 	UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL);
 	UpdateTimer_g->updateLastTime();

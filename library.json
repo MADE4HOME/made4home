@@ -1,0 +1,30 @@
+{
+  "name": "MADE4HOME Framework Library",
+  "description": "Arduino library for MADE4HOME IoT board.",
+  "keywords": "MADE4HOME, IoT board",
+  "authors": [
+    {
+      "name": "Orlin Dimitrov",
+      "maintainer": true
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MADE4HOME/made4home.git"
+  },
+  "version": "1.0.0",
+  "license": "MIT",
+  "frameworks": "arduino",
+  "platforms": ["esp32"],
+  "dependencies": [
+    {
+      "name": "Adafruit_NeoPixel",
+      "platform": "esp32"
+    },
+    {
+      "name": "Adafruit_MCP23008",
+      "platform": "esp32"
+    }
+  ],
+  "headers": ""
+}

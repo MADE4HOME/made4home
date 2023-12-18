@@ -221,7 +221,6 @@ void loop()
         }
 
         // Time controlled process.
-        // TODO: Read all inputs and publish it.
         OptoInputsMessage = "[";
         OptoInputsMessage += String(Made4Home.digitalRead(PIN_IN_1) == 0) + ", ";
         OptoInputsMessage += String(Made4Home.digitalRead(PIN_IN_2) == 0) + ", ";

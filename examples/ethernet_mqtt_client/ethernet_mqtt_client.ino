@@ -26,13 +26,15 @@ SOFTWARE.
 
 #pragma region Definitions
 
-#define UPDATE_INTERVAL 1000
+#define UPDATE_INTERVAL 5000
 
 // #define SECURE_MQTT
 
 #pragma endregion
 
 #pragma region Headers
+
+#include <ETH.h>
 
 #include <WiFi.h>
 
@@ -42,8 +44,6 @@ SOFTWARE.
 
 #include "FxTimer.h"
 
-#include "DefaultCredentials.h"
-
 #pragma endregion
 
 #pragma region Variables
@@ -52,18 +52,6 @@ SOFTWARE.
  * @brief Update timer instance.
  */
 FxTimer *UpdateTimer_g;
-
-/**
- * @brief Replace with your network credentials.
- * 
- */
-const char* SSID_g = DEFAULT_SSID;
-
-/**
- * @brief Replace with your network credentials.
- * 
- */
-const char* PASS_g = DEFAULT_PASS;
 
 /**
  * @brief MQTT server domain.
@@ -147,9 +135,22 @@ PubSubClient *MQTTClient_g;
  */
 String OptoInputsMessage;
 
+/**
+ * @brief Ethernet connection state.
+ * 
+ */
+static bool EthernetConnected_g = false;
+
 #pragma endregion
 
 #pragma region Prototypes
+
+/**
+ * @brief Network event state handler.
+ * 
+ * @param event Event input.
+ */
+void wifi_event(WiFiEvent_t event);
 
 /**
  * @brief MQTT reconnect to the server.
@@ -181,21 +182,17 @@ void setup()
 	UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL);
 	UpdateTimer_g->updateLastTime();
 
-    // Connect to Wi-Fi network with SSID and password.
-    Serial.print("Connecting to ");
-    Serial.println(SSID_g);
-    WiFi.begin(SSID_g, PASS_g);
-    while (WiFi.status() != WL_CONNECTED)
-    {
-        delay(500);
-        Serial.print(".");
-    }
+    // Attach the network events.
+    WiFi.onEvent(wifi_event);
 
-    // Print local IP address and start web server.
-    Serial.println("");
-    Serial.println("WiFi connected.");
-    Serial.println("IP address: ");
-    Serial.println(WiFi.localIP());
+    // Run the Ethernet.
+    ETH.begin(
+        PIN_ETH_PHY_ADDR,
+        PIN_ETH_PHY_POWER,
+        PIN_ETH_PHY_MDC,
+        PIN_ETH_PHY_MDIO,
+        PIN_ETH_PHY_TYPE,
+        PIN_ETH_CLK_MODE);
 
     // Setup the IO board.
     Made4Home.setup();
@@ -224,7 +221,6 @@ void loop()
         }
 
         // Time controlled process.
-        // TODO: Read all inputs and publish it.
         OptoInputsMessage = "[";
         OptoInputsMessage += String(Made4Home.digitalRead(PIN_IN_1) == 0) + ", ";
         OptoInputsMessage += String(Made4Home.digitalRead(PIN_IN_2) == 0) + ", ";
@@ -237,6 +233,50 @@ void loop()
 }
 
 #pragma region Functions
+
+/**
+ * @brief Network event state handler.
+ * 
+ * @param event Event input.
+ */
+void wifi_event(WiFiEvent_t event)
+{
+    switch (event)
+    {
+    case ARDUINO_EVENT_ETH_START:
+        Serial.println("ETH Started");
+        //set eth hostname here
+        ETH.setHostname("made4home");
+        break;
+    case ARDUINO_EVENT_ETH_CONNECTED:
+        Serial.println("ETH Connected");
+        break;
+    case ARDUINO_EVENT_ETH_GOT_IP:
+        Serial.print("ETH MAC: ");
+        Serial.print(ETH.macAddress());
+        Serial.print(", IPv4: ");
+        Serial.print(ETH.localIP());
+        if (ETH.fullDuplex())
+        {
+            Serial.print(", FULL_DUPLEX");
+        }
+        Serial.print(", ");
+        Serial.print(ETH.linkSpeed());
+        Serial.println("Mbps");
+        EthernetConnected_g = true;
+        break;
+    case ARDUINO_EVENT_ETH_DISCONNECTED:
+        Serial.println("ETH Disconnected");
+        EthernetConnected_g = false;
+        break;
+    case ARDUINO_EVENT_ETH_STOP:
+        Serial.println("ETH Stopped");
+        EthernetConnected_g = false;
+        break;
+    default:
+        break;
+    }
+}
 
 /**
  * @brief MQTT reconnect to the server.
@@ -269,10 +309,10 @@ void mqtt_reconnect()
             MQTTClient_g->publish(GreetingsTopic_g, "Hi, I'm MADE4HOME ^^");
 
             // Subscribe
-            // MQTTClient_g->subscribe(Output1Topic_g);
-            // MQTTClient_g->subscribe(Output2Topic_g);
-            // MQTTClient_g->subscribe(Output3Topic_g);
-            // MQTTClient_g->subscribe(Output4Topic_g);
+            MQTTClient_g->subscribe(Output1Topic_g);
+            MQTTClient_g->subscribe(Output2Topic_g);
+            MQTTClient_g->subscribe(Output3Topic_g);
+            MQTTClient_g->subscribe(Output4Topic_g);
         }
         else
         {

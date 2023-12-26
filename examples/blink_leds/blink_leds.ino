@@ -55,7 +55,7 @@ uint8_t State_g;
 
 void setup()
 {
-	// Setup the blink timer.
+	// Setup the update timer.
 	UpdateTimer_g = new FxTimer();
 	UpdateTimer_g->setExpirationTime(BLINK_INTERVAL);
 	UpdateTimer_g->updateLastTime();

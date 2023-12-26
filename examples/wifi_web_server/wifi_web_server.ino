@@ -26,11 +26,7 @@ SOFTWARE.
 
 #pragma region Definitions
 
-#define TIMEOUT 2000
-
-#define STATE_ON "on"
-
-#define STATE_OFF "off"
+#define UPDATE_INTERVAL 2000
 
 #pragma endregion
 
@@ -175,7 +171,7 @@ void do_serve()
         String CurrentLineL = "";                // make a String to hold incoming data from the client
 
         // loop while the client's connected
-        while (ClientL.connected() && CurrentTime_g - PreviousTime_g <= TIMEOUT)
+        while (ClientL.connected() && CurrentTime_g - PreviousTime_g <= UPDATE_INTERVAL)
         {
             CurrentTime_g = millis();
             if (ClientL.available())

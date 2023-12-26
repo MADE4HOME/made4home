@@ -24,7 +24,23 @@
     {
       "name": "Adafruit_MCP23008",
       "platform": "esp32"
+    },
+    {
+      "name": "ArduinoECCX08",
+      "platform": "esp32"
+    },
+    {
+      "name": "eModbus",
+      "platform": "esp32"
+    },
+    {
+      "name": "pubsubclient",
+      "platform": "esp32"
     }
   ],
-  "headers": ""
+  "headers": [
+    "src/made4home.h",
+    "src/FxTimer.h",
+    "src/*.h"
+  ]
 }

@@ -9,9 +9,9 @@ The framework depends on different hardware submodules that are part of the MADE
 We will provide links to libraries that we choose. The reasons to choose these libraries are because they are from the same provider and are with the same code quality.
 
  - [Relay Outputs and Opto Inputs (MCP23008)](https://github.com/adafruit/Adafruit-MCP23017-Arduino-Library)
- - [NeoPixel LEDs](https://github.com/adafruit/Adafruit_NeoPixel)
- - [ArduinoECCX08](https://github.com/arduino-libraries/ArduinoECCX08)
- - [RS485 Interface](https://github.com/eModbus/eModbus)
+ - [LEDs (NeoPixel)](https://github.com/adafruit/Adafruit_NeoPixel)
+ - [Crypto CoProcessor (ATECC508A)](https://github.com/arduino-libraries/ArduinoECCX08)
+ - [Modbus (RS485)](https://github.com/eModbus/eModbus)
  - [MQTT Client](https://github.com/knolleary/pubsubclient)
 
 ## Examples

@@ -28,7 +28,7 @@ SOFTWARE.
 
 #pragma region Definitions
 
-#define UPDATE_INTERVAL 1000
+#define UPDATE_INTERVAL_MS 1000
 
 #define MB_BAUDRATE 9600
 
@@ -92,7 +92,7 @@ void setup()
 
     // Setup the update timer.
 	  UpdateTimer_g = new FxTimer();
-	  UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL);
+	  UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL_MS);
 	  UpdateTimer_g->updateLastTime();
 
     Made4Home.setup();

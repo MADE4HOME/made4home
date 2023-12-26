@@ -26,7 +26,7 @@ SOFTWARE.
 
 #pragma region Definitions
 
-#define UPDATE_INTERVAL 5000
+#define UPDATE_INTERVAL_MS 5000
 
 #pragma endregion
 
@@ -78,7 +78,7 @@ void setup()
 {
   	// Setup the update timer.
 	UpdateTimer_g = new FxTimer();
-	UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL);
+	UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL_MS);
 	UpdateTimer_g->updateLastTime();
 
     // Setup the serial port.

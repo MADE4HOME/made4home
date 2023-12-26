@@ -26,7 +26,7 @@ SOFTWARE.
 
 #pragma region Definitions
 
-#define UPDATE_INTERVAL 2000
+#define UPDATE_INTERVAL_MS 2000
 
 #pragma endregion
 
@@ -208,7 +208,7 @@ void do_serve()
         String CurrentLineL = "";                // make a String to hold incoming data from the client
 
         // loop while the client's connected
-        while (ClientL.connected() && CurrentTime_g - PreviousTime_g <= UPDATE_INTERVAL)
+        while (ClientL.connected() && CurrentTime_g - PreviousTime_g <= UPDATE_INTERVAL_MS)
         {
             CurrentTime_g = millis();
             if (ClientL.available())

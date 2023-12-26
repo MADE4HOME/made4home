@@ -174,6 +174,8 @@ SOFTWARE.
 
 #define PINS_RELAYS 4
 
+#define DEFAULT_BAUDRATE 115200
+
 #pragma endregion
 
 #pragma region Headers

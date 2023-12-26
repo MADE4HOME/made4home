@@ -26,8 +26,6 @@ SOFTWARE.
 
 #pragma region Definitions
 
-#define UART0_BAUDRATE 115200
-
 #define UPDATE_INTERVAL 1
 
 #pragma endregion
@@ -59,7 +57,7 @@ Adafruit_MCP23008 *MCP_g;
 void setup()
 {
   // Run the UART.
-  Serial.begin(UART0_BAUDRATE);
+  Serial.begin(DEFAULT_BAUDRATE);
 
 	// Setup the update timer.
 	UpdateTimer_g = new FxTimer();

@@ -83,7 +83,7 @@ void setup()
 	UpdateTimer_g->updateLastTime();
 
     // Setup the serial port.
-    Serial.begin(115200, SERIAL_8N1);
+    Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
 
     // Connect to Wi-Fi network with SSID and PASS_g
     Serial.print("Connecting to ");

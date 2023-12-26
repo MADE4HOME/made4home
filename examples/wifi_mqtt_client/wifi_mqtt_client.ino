@@ -171,7 +171,7 @@ void mqtt_msg_cb(char *topic, byte *payload, unsigned int length);
 void setup()
 {
     // Setup the serial port.
-    Serial.begin(115200, SERIAL_8N1);
+    Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
 
     // MQTT client.
     MQTTClient_g = new PubSubClient(WiFiClient_g);

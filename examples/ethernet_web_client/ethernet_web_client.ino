@@ -82,7 +82,7 @@ void setup()
 	UpdateTimer_g->updateLastTime();
 
     // Setup the serial port.
-    Serial.begin(115200, SERIAL_8N1);
+    Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
 
     // Attach the network events.
     WiFi.onEvent(wifi_event);

@@ -125,7 +125,7 @@ void setup()
     Server_g = new WiFiServer(80);
 
     // Setup the serial port.
-    Serial.begin(115200, SERIAL_8N1);
+    Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
 
     Made4Home.setup();
 

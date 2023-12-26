@@ -119,10 +119,10 @@ void setup()
     // Start ModbusRTU background task
     MBserver_g->begin(Serial2);
 
-  	// Setup the update timer.
-	  UpdateTimer_g = new FxTimer();
-	  UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL_MS);
-	  UpdateTimer_g->updateLastTime();
+    // Setup the update timer.
+    UpdateTimer_g = new FxTimer();
+    UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL_MS);
+    UpdateTimer_g->updateLastTime();
 }
 
 void loop()

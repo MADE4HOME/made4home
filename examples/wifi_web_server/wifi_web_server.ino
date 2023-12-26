@@ -113,6 +113,12 @@ const char* PASS_g = DEFAULT_PASS;
 #pragma region Prototypes
 
 /**
+ * @brief Connect to WiFi.
+ * 
+ */
+void connect_to_wifi();
+
+/**
  * @brief Do serve.
  * 
  */
@@ -122,28 +128,16 @@ void do_serve();
 
 void setup()
 {
-    Server_g = new WiFiServer(80);
-
     // Setup the serial port.
     Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
     while (!Serial) {}
 
     Made4Home.setup();
+    
+    // Connect to Wi-Fi network with SSID and password.
+    connect_to_wifi();
 
-    // Connect to Wi-Fi network with SSID and PASS_g
-    Serial.print("Connecting to ");
-    Serial.println(SSID_g);
-    WiFi.begin(SSID_g, PASS_g);
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(500);
-        Serial.print(".");
-    }
-    // Print local IP address and start web server
-    Serial.println("");
-    Serial.println("WiFi connected.");
-    Serial.println("IP address: ");
-    Serial.println(WiFi.localIP());
-
+    Server_g = new WiFiServer(80);
     Server_g->begin();
 }
 
@@ -153,6 +147,26 @@ void loop()
 }
 
 #pragma region Functions
+
+/**
+ * @brief Connect to WiFi.
+ * 
+ */
+void connect_to_wifi()
+{
+    Serial.print("Connecting to ");
+    Serial.println(SSID_g);
+    WiFi.begin(SSID_g, PASS_g);
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        delay(500);
+        Serial.print(".");
+    }
+    Serial.print("Connected to ");
+    Serial.println(SSID_g);
+    Serial.print("IP address: ");
+    Serial.println(WiFi.localIP());
+}
 
 /**
  * @brief Do serve.

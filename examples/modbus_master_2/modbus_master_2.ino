@@ -91,9 +91,9 @@ void setup()
     ModbusMaster_g.postTransmission(postTransmission);
 
     // Setup the update timer.
-	  UpdateTimer_g = new FxTimer();
-	  UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL_MS);
-	  UpdateTimer_g->updateLastTime();
+    UpdateTimer_g = new FxTimer();
+    UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL_MS);
+    UpdateTimer_g->updateLastTime();
 
     Made4Home.setup();
     Serial.println("__ OK __");

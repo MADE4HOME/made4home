@@ -152,6 +152,12 @@ String OptoInputsMessage;
 #pragma region Prototypes
 
 /**
+ * @brief Connect to WiFi.
+ * 
+ */
+void connect_to_wifi();
+
+/**
  * @brief MQTT reconnect to the server.
  * 
  */
@@ -174,32 +180,19 @@ void setup()
     Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
     while (!Serial) {}
 
+    // Setup the IO board.
+    Made4Home.setup();
+
+    // Connect to Wi-Fi network with SSID and password.
+    connect_to_wifi();
+
     // MQTT client.
     MQTTClient_g = new PubSubClient(WiFiClient_g);
 
-  	// Setup the update timer.
-	UpdateTimer_g = new FxTimer();
-	UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL_MS);
-	UpdateTimer_g->updateLastTime();
-
-    // Connect to Wi-Fi network with SSID and password.
-    Serial.print("Connecting to ");
-    Serial.println(SSID_g);
-    WiFi.begin(SSID_g, PASS_g);
-    while (WiFi.status() != WL_CONNECTED)
-    {
-        delay(500);
-        Serial.print(".");
-    }
-
-    // Print local IP address and start web server.
-    Serial.println("");
-    Serial.println("WiFi connected.");
-    Serial.println("IP address: ");
-    Serial.println(WiFi.localIP());
-
-    // Setup the IO board.
-    Made4Home.setup();
+    // Setup the update timer.
+    UpdateTimer_g = new FxTimer();
+    UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL_MS);
+    UpdateTimer_g->updateLastTime();
 }
 
 void loop()
@@ -225,7 +218,6 @@ void loop()
         }
 
         // Time controlled process.
-        // TODO: Read all inputs and publish it.
         OptoInputsMessage = "[";
         OptoInputsMessage += String(Made4Home.digitalRead(PIN_IN_1) == 0) + ", ";
         OptoInputsMessage += String(Made4Home.digitalRead(PIN_IN_2) == 0) + ", ";
@@ -238,6 +230,26 @@ void loop()
 }
 
 #pragma region Functions
+
+/**
+ * @brief Connect to WiFi.
+ * 
+ */
+void connect_to_wifi()
+{
+    Serial.print("Connecting to ");
+    Serial.println(SSID_g);
+    WiFi.begin(SSID_g, PASS_g);
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        delay(500);
+        Serial.print(".");
+    }
+    Serial.print("Connected to ");
+    Serial.println(SSID_g);
+    Serial.print("IP address: ");
+    Serial.println(WiFi.localIP());
+}
 
 /**
  * @brief MQTT reconnect to the server.

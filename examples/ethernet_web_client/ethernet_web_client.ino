@@ -76,11 +76,6 @@ void do_client(const char* host, uint16_t port);
 
 void setup()
 {
-  	// Setup the update timer.
-	UpdateTimer_g = new FxTimer();
-	UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL_MS);
-	UpdateTimer_g->updateLastTime();
-
     // Setup the serial port.
     Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
     while (!Serial) {}
@@ -96,6 +91,11 @@ void setup()
         PIN_ETH_PHY_MDIO,
         PIN_ETH_PHY_TYPE,
         PIN_ETH_CLK_MODE);
+
+      // Setup the update timer.
+    UpdateTimer_g = new FxTimer();
+    UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL_MS);
+    UpdateTimer_g->updateLastTime();
 }
 
 void loop()

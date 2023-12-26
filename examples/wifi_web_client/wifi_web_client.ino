@@ -66,6 +66,12 @@ const char* PASS_g = DEFAULT_PASS;
 #pragma region Prototypes
 
 /**
+ * @brief Connect to WiFi.
+ * 
+ */
+void connect_to_wifi();
+
+/**
  * @brief Do HTTP request.
  * 
  * @param host Host
@@ -77,28 +83,20 @@ void do_client(const char* host, uint16_t port);
 
 void setup()
 {
-  	// Setup the update timer.
-	UpdateTimer_g = new FxTimer();
-	UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL_MS);
-	UpdateTimer_g->updateLastTime();
-
     // Setup the serial port.
     Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
     while (!Serial) {}
 
-    // Connect to Wi-Fi network with SSID and PASS_g
-    Serial.print("Connecting to ");
-    Serial.println(SSID_g);
-    WiFi.begin(SSID_g, PASS_g);
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(500);
-        Serial.print(".");
-    }
-    // Print local IP address and start web server
-    Serial.println("");
-    Serial.println("WiFi connected.");
-    Serial.println("IP address: ");
-    Serial.println(WiFi.localIP());
+    // Setup the IO board.
+    Made4Home.setup();
+
+    // Connect to Wi-Fi network with SSID and password.
+    connect_to_wifi();
+    
+    // Setup the update timer.
+    UpdateTimer_g = new FxTimer();
+    UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL_MS);
+    UpdateTimer_g->updateLastTime();
 }
 
 void loop()
@@ -114,6 +112,26 @@ void loop()
 }
 
 #pragma region Functions
+
+/**
+ * @brief Connect to WiFi.
+ * 
+ */
+void connect_to_wifi()
+{
+    Serial.print("Connecting to ");
+    Serial.println(SSID_g);
+    WiFi.begin(SSID_g, PASS_g);
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        delay(500);
+        Serial.print(".");
+    }
+    Serial.print("Connected to ");
+    Serial.println(SSID_g);
+    Serial.print("IP address: ");
+    Serial.println(WiFi.localIP());
+}
 
 /**
  * @brief Do HTTP request.

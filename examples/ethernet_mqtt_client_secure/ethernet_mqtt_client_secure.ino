@@ -149,6 +149,12 @@ static bool EthernetConnected_g = false;
 #pragma region Prototypes
 
 /**
+ * @brief Prepare crypto element for work.
+ * 
+ */
+void prepare_crypto_element();
+
+/**
  * @brief Network event state handler.
  * 
  * @param event Event input.
@@ -178,26 +184,17 @@ void setup()
     Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
     while (!Serial) {}
 
-    // Setup secure element.
-    if (!ECCX08.begin())
-    {
-        Serial.println("No ECCX08 present!");
-        while (1);
-    }
+    // Setup the IO board.
+    Made4Home.setup();
 
-    // reconstruct the self signed cert
-    ECCX08SelfSignedCert.beginReconstruction(0, 8);
-    ECCX08SelfSignedCert.setCommonName(ECCX08.serialNumber());
-    ECCX08SelfSignedCert.endReconstruction();
-
+    prepare_crypto_element();
+    
     // Set up MQTT over SSL with ATECC508A certificate
     WiFiClient_g.setCACert((const char *)ECCX08SelfSignedCert.bytes());
-    MQTTClient_g->setServer(ServerHost_g, ServerPort_g);
 
-  	// Setup the update timer.
-	UpdateTimer_g = new FxTimer();
-	UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL_MS);
-	UpdateTimer_g->updateLastTime();
+    // Setup MQTT client.
+    MQTTClient_g = new PubSubClient(WiFiClient_g);
+    MQTTClient_g->setServer(ServerHost_g, ServerPort_g);
 
     // Attach the network events.
     WiFi.onEvent(wifi_event);
@@ -211,8 +208,10 @@ void setup()
         PIN_ETH_PHY_TYPE,
         PIN_ETH_CLK_MODE);
 
-    // Setup the IO board.
-    Made4Home.setup();
+    // Setup the update timer.
+    UpdateTimer_g = new FxTimer();
+    UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL_MS);
+    UpdateTimer_g->updateLastTime();
 }
 
 void loop()
@@ -250,6 +249,24 @@ void loop()
 }
 
 #pragma region Functions
+
+/**
+ * @brief Prepare crypto element for work.
+ * 
+ */
+void prepare_crypto_element()
+{
+    // Setup secure element.
+    if (!ECCX08.begin())
+    {
+        Serial.println("No ECCX08 present!");
+        while (1);
+    }
+    // reconstruct the self signed cert
+    ECCX08SelfSignedCert.beginReconstruction(0, 8);
+    ECCX08SelfSignedCert.setCommonName(ECCX08.serialNumber());
+    ECCX08SelfSignedCert.endReconstruction();
+}
 
 /**
  * @brief Network event state handler.

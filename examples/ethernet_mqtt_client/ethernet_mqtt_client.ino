@@ -57,7 +57,7 @@ FxTimer *UpdateTimer_g;
  * @brief MQTT server domain.
  * 
  */
-const char *ClientID_g = "home.iot.loc";
+const char *ServerHost_g = "home.iot.loc";
 
 /**
  * @brief MQTT server port.
@@ -285,7 +285,7 @@ void wifi_event(WiFiEvent_t event)
 void mqtt_reconnect()
 {
     // Connecting to a MQTT broker.
-    MQTTClient_g->setServer(ClientID_g, ServerPort_g);
+    MQTTClient_g->setServer(ServerHost_g, ServerPort_g);
     MQTTClient_g->setCallback(mqtt_msg_cb);
 
     String client_id = "MADE4HOME-";

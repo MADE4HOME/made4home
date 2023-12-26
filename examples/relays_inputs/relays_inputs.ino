@@ -49,30 +49,30 @@ FxTimer *UpdateTimer_g;
 
 void setup()
 {
-  // Run the UART.
-  Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
-  while (!Serial) {}
+    // Run the UART.
+    Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
+    while (!Serial) {}
+
+    Made4Home.setup();
 
     // Setup the update timer.
     UpdateTimer_g = new FxTimer();
     UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL_MS);
-    UpdateTimer_g->updateLastTime();
-  
-  Made4Home.setup();
+    UpdateTimer_g->updateLastTime();  
 }
 
 void loop()
 {
-  UpdateTimer_g->update();
-  if(UpdateTimer_g->expired())
-  {
-    UpdateTimer_g->updateLastTime();
-    UpdateTimer_g->clear();
+    UpdateTimer_g->update();
+    if(UpdateTimer_g->expired())
+    {
+        UpdateTimer_g->updateLastTime();
+        UpdateTimer_g->clear();
 
-    // Update the output states via input states.
-    Made4Home.digitalWrite(PIN_RELAY_1, (0 == Made4Home.digitalRead(PIN_IN_1)));
-    Made4Home.digitalWrite(PIN_RELAY_2, (0 == Made4Home.digitalRead(PIN_IN_2)));
-    Made4Home.digitalWrite(PIN_RELAY_3, (0 == Made4Home.digitalRead(PIN_IN_3)));
-    Made4Home.digitalWrite(PIN_RELAY_4, (0 == Made4Home.digitalRead(PIN_IN_4)));
-  }
+        // Update the output states via input states.
+        Made4Home.digitalWrite(PIN_RELAY_1, (0 == Made4Home.digitalRead(PIN_IN_1)));
+        Made4Home.digitalWrite(PIN_RELAY_2, (0 == Made4Home.digitalRead(PIN_IN_2)));
+        Made4Home.digitalWrite(PIN_RELAY_3, (0 == Made4Home.digitalRead(PIN_IN_3)));
+        Made4Home.digitalWrite(PIN_RELAY_4, (0 == Made4Home.digitalRead(PIN_IN_4)));
+    }
 }

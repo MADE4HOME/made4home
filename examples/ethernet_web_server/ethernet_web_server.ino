@@ -117,16 +117,14 @@ void do_serve();
 
 void setup()
 {
-    Server_g = new WiFiServer(80);
-
     // Setup the serial port.
     Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
     while (!Serial) {}
 
+    Made4Home.setup();
+
     // Attach the network events.
     WiFi.onEvent(wifi_event);
-
-    Made4Home.setup();
 
     // Run the Ethernet.
     ETH.begin(
@@ -137,6 +135,7 @@ void setup()
         PIN_ETH_PHY_TYPE,
         PIN_ETH_CLK_MODE);
 
+    Server_g = new WiFiServer(80);
     Server_g->begin();
 }
 

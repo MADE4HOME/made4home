@@ -317,10 +317,10 @@ void mqtt_reconnect()
             MQTTClient_g->publish(GreetingsTopic_g, "Hi, I'm MADE4HOME ^^");
 
             // Subscribe
-            // MQTTClient_g->subscribe(Output1Topic_g);
-            // MQTTClient_g->subscribe(Output2Topic_g);
-            // MQTTClient_g->subscribe(Output3Topic_g);
-            // MQTTClient_g->subscribe(Output4Topic_g);
+            MQTTClient_g->subscribe(Output1Topic_g);
+            MQTTClient_g->subscribe(Output2Topic_g);
+            MQTTClient_g->subscribe(Output3Topic_g);
+            MQTTClient_g->subscribe(Output4Topic_g);
         }
         else
         {

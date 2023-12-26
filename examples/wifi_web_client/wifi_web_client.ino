@@ -101,14 +101,13 @@ void setup()
 
 void loop()
 {
-  UpdateTimer_g->update();
-  if(UpdateTimer_g->expired())
-  {
-    UpdateTimer_g->updateLastTime();
-    UpdateTimer_g->clear();
-
-    do_client("google.com", 80);
-  }
+    UpdateTimer_g->update();
+    if(UpdateTimer_g->expired())
+    {
+        UpdateTimer_g->updateLastTime();
+        UpdateTimer_g->clear();   
+        do_client("google.com", 80);
+    }
 }
 
 #pragma region Functions

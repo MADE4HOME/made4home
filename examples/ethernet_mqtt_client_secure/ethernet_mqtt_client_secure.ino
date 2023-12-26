@@ -37,10 +37,13 @@ SOFTWARE.
 #include <ETH.h>
 
 #include <WiFi.h>
-
-#include "made4home.h"
+#include <WiFiClientSecure.h>
 
 #include <PubSubClient.h>
+#include <ArduinoECCX08.h>
+#include <utility/ECCX08SelfSignedCert.h>
+
+#include "made4home.h"
 
 #include "FxTimer.h"
 
@@ -121,7 +124,7 @@ const char *InputsTopic_g = "made4home/inputs";
  * @brief WiFi client.
  * 
  */
-WiFiClient WiFiClient_g;
+WiFiClientSecure WiFiClient_g;
 
 /**
  * @brief MQTT client.
@@ -174,8 +177,21 @@ void setup()
     // Setup the serial port.
     Serial.begin(115200, SERIAL_8N1);
 
-    // MQTT client.
-    MQTTClient_g = new PubSubClient(WiFiClient_g);
+    // Setup secure element.
+    if (!ECCX08.begin())
+    {
+        Serial.println("No ECCX08 present!");
+        while (1);
+    }
+
+    // reconstruct the self signed cert
+    ECCX08SelfSignedCert.beginReconstruction(0, 8);
+    ECCX08SelfSignedCert.setCommonName(ECCX08.serialNumber());
+    ECCX08SelfSignedCert.endReconstruction();
+
+    // Set up MQTT over SSL with ATECC508A certificate
+    WiFiClient_g.setCACert((const char *)ECCX08SelfSignedCert.bytes());
+    MQTTClient_g->setServer(ServerHost_g, ServerPort_g);
 
   	// Setup the update timer.
 	UpdateTimer_g = new FxTimer();

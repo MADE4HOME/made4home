@@ -69,7 +69,7 @@ const char* PASS_g = DEFAULT_PASS;
  * @brief MQTT server domain.
  * 
  */
-const char *ClientID_g = "home.iot.loc";
+const char *ServerHost_g = "home.iot.loc";
 
 /**
  * @brief MQTT server port.
@@ -176,7 +176,7 @@ void setup()
     // MQTT client.
     MQTTClient_g = new PubSubClient(WiFiClient_g);
 
-  	// Setup the blink timer.
+  	// Setup the update timer.
 	UpdateTimer_g = new FxTimer();
 	UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL);
 	UpdateTimer_g->updateLastTime();
@@ -245,7 +245,7 @@ void loop()
 void mqtt_reconnect()
 {
     // Connecting to a MQTT broker.
-    MQTTClient_g->setServer(ClientID_g, ServerPort_g);
+    MQTTClient_g->setServer(ServerHost_g, ServerPort_g);
     MQTTClient_g->setCallback(mqtt_msg_cb);
 
     String client_id = "MADE4HOME-";
@@ -269,10 +269,10 @@ void mqtt_reconnect()
             MQTTClient_g->publish(GreetingsTopic_g, "Hi, I'm MADE4HOME ^^");
 
             // Subscribe
-            MQTTClient_g->subscribe(Output1Topic_g);
-            MQTTClient_g->subscribe(Output2Topic_g);
-            MQTTClient_g->subscribe(Output3Topic_g);
-            MQTTClient_g->subscribe(Output4Topic_g);
+            // MQTTClient_g->subscribe(Output1Topic_g);
+            // MQTTClient_g->subscribe(Output2Topic_g);
+            // MQTTClient_g->subscribe(Output3Topic_g);
+            // MQTTClient_g->subscribe(Output4Topic_g);
         }
         else
         {

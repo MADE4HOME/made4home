@@ -77,7 +77,7 @@ void do_client(const char* host, uint16_t port);
 
 void setup()
 {
-  	// Setup the blink timer.
+  	// Setup the update timer.
 	UpdateTimer_g = new FxTimer();
 	UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL);
 	UpdateTimer_g->updateLastTime();

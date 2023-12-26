@@ -170,6 +170,10 @@ SOFTWARE.
 
 #define STATE_OFF "off"
 
+#define PINS_INPUTS 4
+
+#define PINS_RELAYS 4
+
 #pragma endregion
 
 #pragma region Headers
@@ -266,6 +270,18 @@ class Made4Home_t
 #pragma endregion
 
 #pragma region Instance
+
+/**
+ * @brief Array that holds the inputs pins definitions. 
+ * 
+ */
+const int PinsInputs[PINS_INPUTS] = {PIN_IN_1, PIN_IN_2, PIN_IN_3, PIN_IN_4};
+
+/**
+ * @brief Array that holds the outputs pins definitions.
+ * 
+ */
+const int PinsRelays[PINS_RELAYS] = {PIN_RELAY_1, PIN_RELAY_2, PIN_RELAY_3, PIN_RELAY_4};
 
 /**
  * @brief Instance of the IO board abstraction.

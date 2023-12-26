@@ -156,6 +156,18 @@ String OptoInputsMessage;
 #pragma region Prototypes
 
 /**
+ * @brief Connect to WiFi.
+ * 
+ */
+void connect_to_wifi();
+
+/**
+ * @brief Prepare crypto element for work.
+ * 
+ */
+void prepare_crypto_element();
+
+/**
  * @brief MQTT reconnect to the server.
  * 
  */
@@ -177,49 +189,26 @@ void setup()
     // Setup the serial port.
     Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
 
-    // Setup secure element.
-    if (!ECCX08.begin())
-    {
-        Serial.println("No ECCX08 present!");
-        while (1);
-    }
+    // Setup the IO board.
+    Made4Home.setup();
 
-    // MQTT client.
+    // Connect to Wi-Fi network with SSID and password.
+    connect_to_wifi();
+
+    // Prepare the crypto CPU.
+    prepare_crypto_element();
+
+    // Setup MQTT over SSL with ATECC508A certificate
+    WiFiClient_g.setCACert((const char *)ECCX08SelfSignedCert.bytes());
+
+    // Setup MQTT client.
     MQTTClient_g = new PubSubClient(WiFiClient_g);
+    MQTTClient_g->setServer(ServerHost_g, ServerPort_g);
 
-  	// Setup the update timer.
+    // Setup the update timer.
     UpdateTimer_g = new FxTimer();
     UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL_MS);
     UpdateTimer_g->updateLastTime();
-
-    // Connect to Wi-Fi network with SSID and password.
-    Serial.print("Connecting to ");
-    Serial.println(SSID_g);
-    WiFi.begin(SSID_g, PASS_g);
-    while (WiFi.status() != WL_CONNECTED)
-    {
-        delay(500);
-        Serial.print(".");
-    }
-    Serial.println("Connected to WiFi");
-
-    // reconstruct the self signed cert
-    ECCX08SelfSignedCert.beginReconstruction(0, 8);
-    ECCX08SelfSignedCert.setCommonName(ECCX08.serialNumber());
-    ECCX08SelfSignedCert.endReconstruction();
-
-    // Set up MQTT over SSL with ATECC508A certificate
-    WiFiClient_g.setCACert((const char *)ECCX08SelfSignedCert.bytes());
-    MQTTClient_g->setServer(ServerHost_g, ServerPort_g);
-
-    // Print local IP address and start web server.
-    Serial.println("");
-    Serial.println("WiFi connected.");
-    Serial.println("IP address: ");
-    Serial.println(WiFi.localIP());
-
-    // Setup the IO board.
-    Made4Home.setup();
 }
 
 void loop()
@@ -257,6 +246,44 @@ void loop()
 }
 
 #pragma region Functions
+
+/**
+ * @brief Connect to WiFi.
+ * 
+ */
+void connect_to_wifi()
+{
+    Serial.print("Connecting to ");
+    Serial.println(SSID_g);
+    WiFi.begin(SSID_g, PASS_g);
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        delay(500);
+        Serial.print(".");
+    }
+    Serial.print("Connected to ");
+    Serial.println(SSID_g);
+    Serial.print("IP address: ");
+    Serial.println(WiFi.localIP());
+}
+
+/**
+ * @brief Prepare crypto element for work.
+ * 
+ */
+void prepare_crypto_element()
+{
+    // Setup secure element.
+    if (!ECCX08.begin())
+    {
+        Serial.println("No ECCX08 present!");
+        while (1);
+    }
+    // reconstruct the self signed cert
+    ECCX08SelfSignedCert.beginReconstruction(0, 8);
+    ECCX08SelfSignedCert.setCommonName(ECCX08.serialNumber());
+    ECCX08SelfSignedCert.endReconstruction();
+}
 
 /**
  * @brief MQTT reconnect to the server.

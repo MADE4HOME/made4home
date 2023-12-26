@@ -28,7 +28,7 @@ SOFTWARE.
 
 #pragma region Definitions
 
-#define UPDATE_INTERVAL 1000
+#define UPDATE_INTERVAL_MS 1000
 
 #define MB_BAUDRATE 9600
 
@@ -76,7 +76,7 @@ bool DataReadyFlag_g = false;
 void setup()
 {
     // Init Serial monitor
-    Serial.begin(115200);
+    Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
     while (!Serial) {}
 
     pinMode(PIN_RS485_EN, OUTPUT);
@@ -91,9 +91,9 @@ void setup()
     ModbusMaster_g.postTransmission(postTransmission);
 
     // Setup the update timer.
-	  UpdateTimer_g = new FxTimer();
-	  UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL);
-	  UpdateTimer_g->updateLastTime();
+    UpdateTimer_g = new FxTimer();
+    UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL_MS);
+    UpdateTimer_g->updateLastTime();
 
     Made4Home.setup();
     Serial.println("__ OK __");

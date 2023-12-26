@@ -26,7 +26,7 @@ SOFTWARE.
 
 #pragma region Definitions
 
-#define UPDATE_INTERVAL 2000
+#define UPDATE_INTERVAL_MS 2000
 
 #pragma endregion
 
@@ -117,15 +117,14 @@ void do_serve();
 
 void setup()
 {
-    Server_g = new WiFiServer(80);
-
     // Setup the serial port.
-    Serial.begin(115200, SERIAL_8N1);
+    Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
+    while (!Serial) {}
+
+    Made4Home.setup();
 
     // Attach the network events.
     WiFi.onEvent(wifi_event);
-
-    Made4Home.setup();
 
     // Run the Ethernet.
     ETH.begin(
@@ -136,6 +135,7 @@ void setup()
         PIN_ETH_PHY_TYPE,
         PIN_ETH_CLK_MODE);
 
+    Server_g = new WiFiServer(80);
     Server_g->begin();
 }
 
@@ -208,7 +208,7 @@ void do_serve()
         String CurrentLineL = "";                // make a String to hold incoming data from the client
 
         // loop while the client's connected
-        while (ClientL.connected() && CurrentTime_g - PreviousTime_g <= UPDATE_INTERVAL)
+        while (ClientL.connected() && CurrentTime_g - PreviousTime_g <= UPDATE_INTERVAL_MS)
         {
             CurrentTime_g = millis();
             if (ClientL.available())

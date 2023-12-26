@@ -26,9 +26,7 @@ SOFTWARE.
 
 #pragma region Definitions
 
-#define UART0_BAUDRATE 115200
-
-#define UPDATE_INTERVAL 1
+#define UPDATE_INTERVAL_MS 1
 
 #pragma endregion
 
@@ -51,29 +49,30 @@ FxTimer *UpdateTimer_g;
 
 void setup()
 {
-  // Run the UART.
-  Serial.begin(UART0_BAUDRATE);
+    // Run the UART.
+    Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
+    while (!Serial) {}
 
-	// Setup the update timer.
-	UpdateTimer_g = new FxTimer();
-	UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL);
-	UpdateTimer_g->updateLastTime();
-  
-  Made4Home.setup();
+    Made4Home.setup();
+
+    // Setup the update timer.
+    UpdateTimer_g = new FxTimer();
+    UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL_MS);
+    UpdateTimer_g->updateLastTime();  
 }
 
 void loop()
 {
-  UpdateTimer_g->update();
-  if(UpdateTimer_g->expired())
-  {
-    UpdateTimer_g->updateLastTime();
-    UpdateTimer_g->clear();
+    UpdateTimer_g->update();
+    if(UpdateTimer_g->expired())
+    {
+        UpdateTimer_g->updateLastTime();
+        UpdateTimer_g->clear();
 
-    // Update the output states via input states.
-    Made4Home.digitalWrite(PIN_RELAY_1, (0 == Made4Home.digitalRead(PIN_IN_1)));
-    Made4Home.digitalWrite(PIN_RELAY_2, (0 == Made4Home.digitalRead(PIN_IN_2)));
-    Made4Home.digitalWrite(PIN_RELAY_3, (0 == Made4Home.digitalRead(PIN_IN_3)));
-    Made4Home.digitalWrite(PIN_RELAY_4, (0 == Made4Home.digitalRead(PIN_IN_4)));
-  }
+        // Update the output states via input states.
+        Made4Home.digitalWrite(PIN_RELAY_1, (0 == Made4Home.digitalRead(PIN_IN_1)));
+        Made4Home.digitalWrite(PIN_RELAY_2, (0 == Made4Home.digitalRead(PIN_IN_2)));
+        Made4Home.digitalWrite(PIN_RELAY_3, (0 == Made4Home.digitalRead(PIN_IN_3)));
+        Made4Home.digitalWrite(PIN_RELAY_4, (0 == Made4Home.digitalRead(PIN_IN_4)));
+    }
 }

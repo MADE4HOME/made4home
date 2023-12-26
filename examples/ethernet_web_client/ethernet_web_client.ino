@@ -26,7 +26,7 @@ SOFTWARE.
 
 #pragma region Definitions
 
-#define UPDATE_INTERVAL 5000
+#define UPDATE_INTERVAL_MS 5000
 
 #pragma endregion
 
@@ -76,13 +76,9 @@ void do_client(const char* host, uint16_t port);
 
 void setup()
 {
-  	// Setup the update timer.
-	UpdateTimer_g = new FxTimer();
-	UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL);
-	UpdateTimer_g->updateLastTime();
-
     // Setup the serial port.
-    Serial.begin(115200, SERIAL_8N1);
+    Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
+    while (!Serial) {}
 
     // Attach the network events.
     WiFi.onEvent(wifi_event);
@@ -95,6 +91,11 @@ void setup()
         PIN_ETH_PHY_MDIO,
         PIN_ETH_PHY_TYPE,
         PIN_ETH_CLK_MODE);
+
+      // Setup the update timer.
+    UpdateTimer_g = new FxTimer();
+    UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL_MS);
+    UpdateTimer_g->updateLastTime();
 }
 
 void loop()

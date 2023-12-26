@@ -170,9 +170,11 @@ SOFTWARE.
 
 #define STATE_OFF "off"
 
-#define PINS_INPUTS 4
+#define PINS_INPUTS_COUNT 4
 
-#define PINS_RELAYS 4
+#define PINS_RELAYS_COUNT 4
+
+#define DEFAULT_BAUDRATE 115200
 
 #pragma endregion
 
@@ -183,6 +185,22 @@ SOFTWARE.
 #include <Adafruit_NeoPixel.h> // Click here to get the library: http://librarymanager/All#Adafruit_NeoPixel
 
 #include <Adafruit_MCP23008.h> // Click here to get the library: http://librarymanager/All#Adafruit_MCP23008
+
+#pragma endregion
+
+#pragma region Constants
+
+/**
+ * @brief Array that holds the inputs pins definitions. 
+ * 
+ */
+const int PINS_INPUTS[PINS_INPUTS_COUNT] = {PIN_IN_1, PIN_IN_2, PIN_IN_3, PIN_IN_4};
+
+/**
+ * @brief Array that holds the outputs pins definitions.
+ * 
+ */
+const int PINS_RELAYS[PINS_RELAYS_COUNT] = {PIN_RELAY_1, PIN_RELAY_2, PIN_RELAY_3, PIN_RELAY_4};
 
 #pragma endregion
 
@@ -270,18 +288,6 @@ class Made4Home_t
 #pragma endregion
 
 #pragma region Instance
-
-/**
- * @brief Array that holds the inputs pins definitions. 
- * 
- */
-const int PinsInputs[PINS_INPUTS] = {PIN_IN_1, PIN_IN_2, PIN_IN_3, PIN_IN_4};
-
-/**
- * @brief Array that holds the outputs pins definitions.
- * 
- */
-const int PinsRelays[PINS_RELAYS] = {PIN_RELAY_1, PIN_RELAY_2, PIN_RELAY_3, PIN_RELAY_4};
 
 /**
  * @brief Instance of the IO board abstraction.

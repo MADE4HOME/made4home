@@ -26,7 +26,7 @@ SOFTWARE.
 
 #pragma region Definitions
 
-#define UPDATE_INTERVAL 5000
+#define UPDATE_INTERVAL_MS 5000
 
 // #define SECURE_MQTT
 
@@ -63,7 +63,7 @@ const char *ServerHost_g = "home.iot.loc";
  * @brief MQTT server port.
  * 
  */
-const int ServerPort_g = 1883;
+int ServerPort_g = 1883;
 
 #if defined(SECURE_MQTT)
 
@@ -172,15 +172,14 @@ void mqtt_msg_cb(char *topic, byte *payload, unsigned int length);
 void setup()
 {
     // Setup the serial port.
-    Serial.begin(115200, SERIAL_8N1);
+    Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
+    while (!Serial) {}
+
+    // Setup the IO board.
+    Made4Home.setup();
 
     // MQTT client.
     MQTTClient_g = new PubSubClient(WiFiClient_g);
-
-  	// Setup the update timer.
-	UpdateTimer_g = new FxTimer();
-	UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL);
-	UpdateTimer_g->updateLastTime();
 
     // Attach the network events.
     WiFi.onEvent(wifi_event);
@@ -194,8 +193,10 @@ void setup()
         PIN_ETH_PHY_TYPE,
         PIN_ETH_CLK_MODE);
 
-    // Setup the IO board.
-    Made4Home.setup();
+    // Setup the update timer.
+    UpdateTimer_g = new FxTimer();
+    UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL_MS);
+    UpdateTimer_g->updateLastTime();
 }
 
 void loop()

@@ -34,12 +34,16 @@ SOFTWARE.
 
 #pragma region Headers
 
-#include <WiFi.h>
+#include <Wire.h>
 
-#include "made4home.h"
+#include <WiFi.h>
+#include <WiFiClientSecure.h>
 
 #include <PubSubClient.h>
+#include <ArduinoECCX08.h>
+#include <utility/ECCX08SelfSignedCert.h>
 
+#include "made4home.h"
 #include "FxTimer.h"
 
 #include "DefaultCredentials.h"
@@ -133,7 +137,7 @@ const char *InputsTopic_g = "made4home/inputs";
  * @brief WiFi client.
  * 
  */
-WiFiClient WiFiClient_g;
+WiFiClientSecure WiFiClient_g;
 
 /**
  * @brief MQTT client.
@@ -173,13 +177,20 @@ void setup()
     // Setup the serial port.
     Serial.begin(115200, SERIAL_8N1);
 
+    // Setup secure element.
+    if (!ECCX08.begin())
+    {
+        Serial.println("No ECCX08 present!");
+        while (1);
+    }
+
     // MQTT client.
     MQTTClient_g = new PubSubClient(WiFiClient_g);
 
   	// Setup the update timer.
-	UpdateTimer_g = new FxTimer();
-	UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL);
-	UpdateTimer_g->updateLastTime();
+    UpdateTimer_g = new FxTimer();
+    UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL);
+    UpdateTimer_g->updateLastTime();
 
     // Connect to Wi-Fi network with SSID and password.
     Serial.print("Connecting to ");
@@ -190,6 +201,16 @@ void setup()
         delay(500);
         Serial.print(".");
     }
+    Serial.println("Connected to WiFi");
+
+    // reconstruct the self signed cert
+    ECCX08SelfSignedCert.beginReconstruction(0, 8);
+    ECCX08SelfSignedCert.setCommonName(ECCX08.serialNumber());
+    ECCX08SelfSignedCert.endReconstruction();
+
+    // Set up MQTT over SSL with ATECC508A certificate
+    WiFiClient_g.setCACert((const char *)ECCX08SelfSignedCert.bytes());
+    MQTTClient_g->setServer(ServerHost_g, ServerPort_g);
 
     // Print local IP address and start web server.
     Serial.println("");
@@ -224,7 +245,6 @@ void loop()
         }
 
         // Time controlled process.
-        // TODO: Read all inputs and publish it.
         OptoInputsMessage = "[";
         OptoInputsMessage += String(Made4Home.digitalRead(PIN_IN_1) == 0) + ", ";
         OptoInputsMessage += String(Made4Home.digitalRead(PIN_IN_2) == 0) + ", ";

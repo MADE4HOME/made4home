@@ -26,7 +26,7 @@ SOFTWARE.
 
 #pragma region Definitions
 
-#define UPDATE_INTERVAL 1000
+#define UPDATE_INTERVAL_MS 1000
 
 // #define SECURE_MQTT
 
@@ -75,7 +75,7 @@ const char *ServerHost_g = "home.iot.loc";
  * @brief MQTT server port.
  * 
  */
-const int ServerPort_g = 1883;
+int ServerPort_g = 1883;
 
 #if defined(SECURE_MQTT)
 
@@ -152,6 +152,12 @@ String OptoInputsMessage;
 #pragma region Prototypes
 
 /**
+ * @brief Connect to WiFi.
+ * 
+ */
+void connect_to_wifi();
+
+/**
  * @brief MQTT reconnect to the server.
  * 
  */
@@ -171,34 +177,22 @@ void mqtt_msg_cb(char *topic, byte *payload, unsigned int length);
 void setup()
 {
     // Setup the serial port.
-    Serial.begin(115200, SERIAL_8N1);
+    Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
+    while (!Serial) {}
+
+    // Setup the IO board.
+    Made4Home.setup();
+
+    // Connect to Wi-Fi network with SSID and password.
+    connect_to_wifi();
 
     // MQTT client.
     MQTTClient_g = new PubSubClient(WiFiClient_g);
 
-  	// Setup the update timer.
-	UpdateTimer_g = new FxTimer();
-	UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL);
-	UpdateTimer_g->updateLastTime();
-
-    // Connect to Wi-Fi network with SSID and password.
-    Serial.print("Connecting to ");
-    Serial.println(SSID_g);
-    WiFi.begin(SSID_g, PASS_g);
-    while (WiFi.status() != WL_CONNECTED)
-    {
-        delay(500);
-        Serial.print(".");
-    }
-
-    // Print local IP address and start web server.
-    Serial.println("");
-    Serial.println("WiFi connected.");
-    Serial.println("IP address: ");
-    Serial.println(WiFi.localIP());
-
-    // Setup the IO board.
-    Made4Home.setup();
+    // Setup the update timer.
+    UpdateTimer_g = new FxTimer();
+    UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL_MS);
+    UpdateTimer_g->updateLastTime();
 }
 
 void loop()
@@ -224,7 +218,6 @@ void loop()
         }
 
         // Time controlled process.
-        // TODO: Read all inputs and publish it.
         OptoInputsMessage = "[";
         OptoInputsMessage += String(Made4Home.digitalRead(PIN_IN_1) == 0) + ", ";
         OptoInputsMessage += String(Made4Home.digitalRead(PIN_IN_2) == 0) + ", ";
@@ -237,6 +230,26 @@ void loop()
 }
 
 #pragma region Functions
+
+/**
+ * @brief Connect to WiFi.
+ * 
+ */
+void connect_to_wifi()
+{
+    Serial.print("Connecting to ");
+    Serial.println(SSID_g);
+    WiFi.begin(SSID_g, PASS_g);
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        delay(500);
+        Serial.print(".");
+    }
+    Serial.print("Connected to ");
+    Serial.println(SSID_g);
+    Serial.print("IP address: ");
+    Serial.println(WiFi.localIP());
+}
 
 /**
  * @brief MQTT reconnect to the server.
@@ -269,10 +282,10 @@ void mqtt_reconnect()
             MQTTClient_g->publish(GreetingsTopic_g, "Hi, I'm MADE4HOME ^^");
 
             // Subscribe
-            // MQTTClient_g->subscribe(Output1Topic_g);
-            // MQTTClient_g->subscribe(Output2Topic_g);
-            // MQTTClient_g->subscribe(Output3Topic_g);
-            // MQTTClient_g->subscribe(Output4Topic_g);
+            MQTTClient_g->subscribe(Output1Topic_g);
+            MQTTClient_g->subscribe(Output2Topic_g);
+            MQTTClient_g->subscribe(Output3Topic_g);
+            MQTTClient_g->subscribe(Output4Topic_g);
         }
         else
         {

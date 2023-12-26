@@ -27,7 +27,7 @@ SOFTWARE.
 
 #pragma region Definitions
 
-#define UPDATE_INTERVAL 1 // [ms]
+#define UPDATE_INTERVAL_MS 1
 
 #define MB_BAUDRATE 9600
 
@@ -97,7 +97,7 @@ ModbusMessage FC03(ModbusMessage request);
 void setup()
 {
     // Init Serial monitor
-    Serial.begin(115200);
+    Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
     while (!Serial) {}
     Serial.println("__ OK __");
 
@@ -119,10 +119,10 @@ void setup()
     // Start ModbusRTU background task
     MBserver_g->begin(Serial2);
 
-  	// Setup the update timer.
-	  UpdateTimer_g = new FxTimer();
-	  UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL);
-	  UpdateTimer_g->updateLastTime();
+    // Setup the update timer.
+    UpdateTimer_g = new FxTimer();
+    UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL_MS);
+    UpdateTimer_g->updateLastTime();
 }
 
 void loop()
@@ -133,10 +133,10 @@ void loop()
         UpdateTimer_g->updateLastTime();
         UpdateTimer_g->clear();
 
-        for (uint8_t index = 0; index < PINS_INPUTS; index++)
+        for (uint8_t index = 0; index < PINS_INPUTS_COUNT; index++)
         {
             InputsState_g = InputsState_g << 1;
-            InputsState_g |= Made4Home.digitalRead(PinsInputs[index]);
+            InputsState_g |= Made4Home.digitalRead(PINS_INPUTS[index]);
         }
     }
 }

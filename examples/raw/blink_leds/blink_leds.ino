@@ -62,10 +62,10 @@ uint8_t State_g;
 
 void setup()
 {
-	// Setup the update timer.
-	UpdateTimer_g = new FxTimer();
-	UpdateTimer_g->setExpirationTime(BLINK_INTERVAL);
-	UpdateTimer_g->updateLastTime();
+    // Setup the update timer.
+    UpdateTimer_g = new FxTimer();
+    UpdateTimer_g->setExpirationTime(BLINK_INTERVAL);
+    UpdateTimer_g->updateLastTime();
 
     // Create the object.
     LEDs_g = new Adafruit_NeoPixel(LED_COUNT, PIN_LEDs, NEO_GRB + NEO_KHZ800);

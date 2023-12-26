@@ -30,45 +30,45 @@ SOFTWARE.
 #define _FXTIMER_h
 
 #if defined(ARDUINO) && ARDUINO >= 100
-	#include "arduino.h"
+    #include "arduino.h"
 #else
-	#include "WProgram.h"
+    #include "WProgram.h"
 #endif
 
 class FxTimer
 {
  protected:
 
-	 /** @brief Expired flag. */
-	 bool m_expired = false;
+     /** @brief Expired flag. */
+     bool m_expired = false;
 
-	 /** @brief Expiration time. */
-	 unsigned long m_expiration_time = 0;
-	 
-	 /** @brief Last time. */
-	 unsigned long m_last_time = 0;
-	 
-	 /** @brief Current time. */
-	 unsigned long m_now = 0;
-	 
-	 /** @brief Callback when expire. */
-	 void(*callbackExpiration)(unsigned long now);
+     /** @brief Expiration time. */
+     unsigned long m_expiration_time = 0;
+     
+     /** @brief Last time. */
+     unsigned long m_last_time = 0;
+     
+     /** @brief Current time. */
+     unsigned long m_now = 0;
+     
+     /** @brief Callback when expire. */
+     void(*callbackExpiration)(unsigned long now);
 
  public:
 
-	 void update();
+     void update();
 
-	 void updateLastTime();
+     void updateLastTime();
 
-	 void clear();
+     void clear();
 
-	 void setExpirationCb(void(*callback)(unsigned long day));
+     void setExpirationCb(void(*callback)(unsigned long day));
 
-	 void setExpirationTime(unsigned long);
+     void setExpirationTime(unsigned long);
 
-	 unsigned long getExpirationTime();
+     unsigned long getExpirationTime();
 
-	 bool expired();
+     bool expired();
 };
 
 #endif

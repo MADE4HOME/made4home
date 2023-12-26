@@ -76,7 +76,7 @@ bool DataReadyFlag_g = false;
 void setup()
 {
     // Init Serial monitor
-    Serial.begin(DEFAULT_BAUDRATE);
+    Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
     while (!Serial) {}
 
     pinMode(PIN_RS485_EN, OUTPUT);

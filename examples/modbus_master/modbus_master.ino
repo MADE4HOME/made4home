@@ -111,7 +111,7 @@ void setup()
       }
  
     // Init Serial monitor
-    Serial.begin(DEFAULT_BAUDRATE);
+    Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
     while (!Serial) {}
 
   	// Setup the update timer.

@@ -97,7 +97,7 @@ ModbusMessage FC03(ModbusMessage request);
 void setup()
 {
     // Init Serial monitor
-    Serial.begin(DEFAULT_BAUDRATE);
+    Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
     while (!Serial) {}
     Serial.println("__ OK __");
 

@@ -50,7 +50,7 @@ FxTimer *UpdateTimer_g;
 void setup()
 {
   // Run the UART.
-  Serial.begin(DEFAULT_BAUDRATE);
+  Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
 
 	// Setup the update timer.
 	UpdateTimer_g = new FxTimer();

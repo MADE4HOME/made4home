@@ -188,6 +188,7 @@ void setup()
 {
     // Setup the serial port.
     Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
+    while (!Serial) {}
 
     // Setup the IO board.
     Made4Home.setup();

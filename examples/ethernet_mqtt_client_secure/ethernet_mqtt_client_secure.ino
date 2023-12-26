@@ -176,6 +176,7 @@ void setup()
 {
     // Setup the serial port.
     Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
+    while (!Serial) {}
 
     // Setup secure element.
     if (!ECCX08.begin())

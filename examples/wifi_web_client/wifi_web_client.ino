@@ -84,6 +84,7 @@ void setup()
 
     // Setup the serial port.
     Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
+    while (!Serial) {}
 
     // Connect to Wi-Fi network with SSID and PASS_g
     Serial.print("Connecting to ");

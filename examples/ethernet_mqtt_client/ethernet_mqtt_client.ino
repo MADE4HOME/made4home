@@ -173,6 +173,7 @@ void setup()
 {
     // Setup the serial port.
     Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
+    while (!Serial) {}
 
     // MQTT client.
     MQTTClient_g = new PubSubClient(WiFiClient_g);

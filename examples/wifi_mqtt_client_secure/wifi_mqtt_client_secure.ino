@@ -79,7 +79,7 @@ const char *ServerHost_g = "home.iot.loc";
  * @brief MQTT server port.
  * 
  */
-const int ServerPort_g = 1883;
+int ServerPort_g = 1883;
 
 #if defined(SECURE_MQTT)
 

@@ -133,10 +133,10 @@ void loop()
         UpdateTimer_g->updateLastTime();
         UpdateTimer_g->clear();
 
-        for (uint8_t index = 0; index < PINS_INPUTS; index++)
+        for (uint8_t index = 0; index < PINS_INPUTS_COUNT; index++)
         {
             InputsState_g = InputsState_g << 1;
-            InputsState_g |= Made4Home.digitalRead(PinsInputs[index]);
+            InputsState_g |= Made4Home.digitalRead(PINS_INPUTS[index]);
         }
     }
 }

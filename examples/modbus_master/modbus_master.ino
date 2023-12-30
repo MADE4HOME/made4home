@@ -140,26 +140,19 @@ void loop()
         
         for (int index = 0; index < PINS_INPUTS_COUNT; index++)
         {
-            if (Made4Home.digitalRead(index) == HIGH)
+            // Issue the request
+            Error ErrorL1 = ModbusClientRTU_g->addRequest(
+                (uint32_t)millis(),
+                MB_SLAVE_ID,
+                WRITE_COIL,
+                index,
+                Made4Home.digitalRead(index) ? 0xFF00 : 0x0000);
+            
+            if (ErrorL1!=SUCCESS)
             {
-                // Issue the request
-                Error ErrorL1 = ModbusClientRTU_g->addRequest((uint32_t)millis(), MB_SLAVE_ID, WRITE_COIL, index, 0x0000);
-                if (ErrorL1!=SUCCESS)
-                {
-                  ModbusError e(ErrorL1);
-                  LOG_E("Error creating request: %02X - %s\n", (int)e, (const char *)e);
-                }              
-            }
-            else
-            {
-                // Issue the request
-                Error ErrorL2 = ModbusClientRTU_g->addRequest((uint32_t)millis(), MB_SLAVE_ID, WRITE_COIL, index, 0xFF00);
-                if (ErrorL2!=SUCCESS)
-                {
-                  ModbusError e(ErrorL2);
-                  LOG_E("Error creating request: %02X - %s\n", (int)e, (const char *)e);
-                }              
-            }
+              ModbusError e(ErrorL1);
+              LOG_E("Error creating request: %02X - %s\n", (int)e, (const char *)e);
+            }              
         }
     }
 }

@@ -24,8 +24,6 @@ SOFTWARE.
 
 */
 
-// Note: this is an example for the "EASTRON SDM630 Modbus-V2" power meter!
-
 #pragma region Definitions
 
 #define UPDATE_INTERVAL_MS 1000
@@ -33,6 +31,8 @@ SOFTWARE.
 #define MB_BAUDRATE 9600
 
 #define MB_SLAVE_ID 2
+
+#define MB_TIMEOUT_MS 500
 
 #define MB_REG_START 0
 
@@ -44,32 +44,53 @@ SOFTWARE.
 
 #include "made4home.h"
 
-#include "FxTimer.h"
+// Include the header for the ModbusClient RTU style
+#include "ModbusClientRTU.h"
+#include "Logging.h"
+#include "CoilData.h"
 
-#include <ModbusMaster.h>
+#include "FxTimer.h"
 
 #pragma endregion
 
 #pragma region Variables
 
-ModbusMaster ModbusMaster_g;
+/**
+ * @brief The RS485 module has no half-duplex, so the parameter with the DE/RE pin is required!
+ * 
+ */
+ModbusClientRTU *ModbusClientRTU_g;
 
 /** 
  * @brief Update timer instance.
  */
 FxTimer *UpdateTimer_g;
 
-bool CoilState_g = true;
-
 /**
- * @brief Data ready flag.
+ * @brief Coil data.
  * 
  */
-bool DataReadyFlag_g = false;
+CoilData CoilData_g(12);
 
 #pragma endregion
 
 #pragma region Prototypes
+
+/**
+ * @brief Define an onData handler function to receive the regular responses
+ * 
+ * @param response Received response message.
+ * @param token Request's token.
+ */
+void handleData(ModbusMessage response, uint32_t token);
+
+/**
+ * @brief Define an onError handler function to receive error responses
+ * 
+ * @param error Error code.
+ * @param token User-supplied token to identify the causing request.
+ */
+void handleError(Error error, uint32_t token);
 
 #pragma endregion
 
@@ -79,96 +100,104 @@ void setup()
     Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
     while (!Serial) {}
 
-    pinMode(PIN_RS485_EN, OUTPUT);
-    // Init in receive mode
-    digitalWrite(PIN_RS485_EN, 0);
-
-    // Modbus slave ID 2
+    Made4Home.setup();
+   
+    // Set up Serial2 connected to Modbus RTU
+    RTUutils::prepareHardwareSerial(Serial2);
     Serial2.begin(MB_BAUDRATE, SERIAL_8N1, PIN_RS485_RX, PIN_RS485_TX);
-    ModbusMaster_g.begin(MB_SLAVE_ID, Serial2);
-    // Callbacks allow us to configure the RS485 transceiver correctly
-    ModbusMaster_g.preTransmission(preTransmission);
-    ModbusMaster_g.postTransmission(postTransmission);
+
+    ModbusClientRTU_g = new ModbusClientRTU(PIN_RS485_EN);
+
+    // Set up ModbusRTU client.
+    // - provide onData handler function
+    ModbusClientRTU_g->onResponseHandler(&handleResponse);
+    // - provide onError handler function
+    ModbusClientRTU_g->onErrorHandler(&handleError);
+    // Set message timeout to 500ms
+    ModbusClientRTU_g->setTimeout(MB_TIMEOUT_MS);
+    // Start ModbusRTU background task
+    ModbusClientRTU_g->begin(Serial2);
 
     // Setup the update timer.
     UpdateTimer_g = new FxTimer();
     UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL_MS);
     UpdateTimer_g->updateLastTime();
 
-    Made4Home.setup();
-    Serial.println("__ OK __");
+    // Setup default value of the coils.
+    CoilData_g = "000000000000";
 }
 
 void loop()
 {
-    
-    uint8_t result;
-    uint16_t data[6];
+    static Error ErrorL;
 
-    
     UpdateTimer_g->update();
     if(UpdateTimer_g->expired())
     {
         UpdateTimer_g->updateLastTime();
         UpdateTimer_g->clear();
 
-        // Yes.
-        DataReadyFlag_g = false;
-
-
-        // Toggle the coil at address 0x0002 (Manual Load Control)
-        // result = ModbusMaster_g.writeSingleCoil(0x00, CoilState_g);
-        // CoilState_g = !CoilState_g;
-        // if (result == ModbusMaster_g.ku8MBSuccess)
-        // {
-
-        // }
-        // Read 16 registers starting at 0x3100)
-        result = ModbusMaster_g.readDiscreteInputs(MB_REG_START, MB_REG_COUNT);
-        Serial.print("Result: ");
-        Serial.println(result);
-            // We do. Print out the data
-            Serial.printf("Requested at %8.3fs:\n", millis() / 1000.0);
-            for (uint8_t i = 0; i < MB_REG_COUNT; ++i)
-            {
-                Serial.printf("     %04X: %i\n", i + MB_REG_START, ModbusMaster_g.getResponseBuffer(i));
-            }
-            Serial.printf("\r\n\r\n");
-        if (result == ModbusMaster_g.ku8MBSuccess)
+        // Issue the request
+        ErrorL = ModbusClientRTU_g->addRequest((uint32_t)millis(), MB_SLAVE_ID, READ_DISCR_INPUT, MB_REG_START, MB_REG_COUNT);
+        if (ErrorL!=SUCCESS)
         {
-            // We do. Print out the data
-            Serial.printf("Requested at %8.3fs:\n", millis() / 1000.0);
-            for (uint8_t i = 0; i < MB_REG_COUNT; ++i)
-            {
-                Serial.printf("     %04X: %i\n", i + MB_REG_START, ModbusMaster_g.getResponseBuffer(i));
-            }
-            Serial.printf("\r\n\r\n");
+          ModbusError e(ErrorL);
+          LOG_E("Error creating request: %02X - %s\n", (int)e, (const char *)e);
         }
-        else
+
+        for (int index = 0; index < PINS_INPUTS_COUNT; index++)
         {
-          
+            CoilData_g.set(index, (Made4Home.digitalRead(index) == HIGH));
         }
-    }
-    else
-    {
-        // No, but we may have another response
-        if (DataReadyFlag_g)
+
+        // Issue the request
+        ErrorL = ModbusClientRTU_g->addRequest(
+            (uint32_t)millis(),
+            MB_SLAVE_ID,
+            WRITE_MULT_COILS,
+            0, CoilData_g.coils(), CoilData_g.size(), CoilData_g.data());
+
+        if (ErrorL!=SUCCESS)
         {
-            DataReadyFlag_g = false;
-        }
+          ModbusError e(ErrorL);
+          LOG_E("Error creating request: %02X - %s\n", (int)e, (const char *)e);
+        }              
+
     }
 }
 
 #pragma region Functions
 
-void preTransmission()
+void handleResponse(ModbusMessage response, uint32_t token) 
 {
-    digitalWrite(PIN_RS485_EN, 1);
+    static uint8_t FunctionCodeL = 0;
+    static uint8_t InputsL = 0;
+
+    // Get FC.
+    FunctionCodeL = response.getFunctionCode();
+
+    // If it is READ_DISCR_INPUT
+    if (FunctionCodeL == READ_DISCR_INPUT)
+    {
+        InputsL = response[3];      
+        Made4Home.digitalWrite(0, (InputsL & 0x01) ? 1 : 0);
+        Made4Home.digitalWrite(1, (InputsL & 0x02) ? 1 : 0);
+        Made4Home.digitalWrite(2, (InputsL & 0x04) ? 1 : 0);
+        Made4Home.digitalWrite(3, (InputsL & 0x08) ? 1 : 0);
+    }
 }
 
-void postTransmission()
+/**
+ * @brief Define an onError handler function to receive error responses
+ * 
+ * @param error Error code.
+ * @param token User-supplied token to identify the causing request.
+ */
+void handleError(Error error, uint32_t token) 
 {
-    digitalWrite(PIN_RS485_EN, 0);
+    // ModbusError wraps the error code and provides a readable error message for it
+    ModbusError ModbusErrorL(error);
+    LOG_E("Error response: %02X - %s\n", (int)ModbusErrorL, (const char *)ModbusErrorL);
 }
 
 #pragma endregion

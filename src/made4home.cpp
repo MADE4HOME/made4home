@@ -54,20 +54,18 @@ void Made4Home_t::setup()
     //
     if (!m_MCP->begin(IO_EXPANDER_ADDRESS, m_TWIOne))
     {
-      Serial.println("MCP23008 Error.");
-      for (;;)
-      {
-        // Freeze
-      }
+        Serial.println("MCP23008 Error.");
+        for (;;)
+        {
+            // Freeze
+        }
     }
-      m_MCP->pinMode(PIN_RELAY_1, OUTPUT);
-      m_MCP->pinMode(PIN_RELAY_2, OUTPUT);
-      m_MCP->pinMode(PIN_RELAY_3, OUTPUT);
-      m_MCP->pinMode(PIN_RELAY_4, OUTPUT);
-      m_MCP->pinMode(PIN_IN_1, INPUT);
-      m_MCP->pinMode(PIN_IN_2, INPUT);
-      m_MCP->pinMode(PIN_IN_3, INPUT);
-      m_MCP->pinMode(PIN_IN_4, INPUT);
+
+    for (uint8_t pin = 0; pin < PINS_INPUTS_COUNT; pin++)
+    {
+        m_MCP->pinMode(PINS_RELAYS[pin], OUTPUT);
+        m_MCP->pinMode(PINS_INPUTS[pin], INPUT);
+    }
 }
 
 /**
@@ -121,28 +119,28 @@ void Made4Home_t::setL2(int r, int g, int b)
  */
 int Made4Home_t::digitalRead(int pin)
 {
-    if (pin < PIN_IN_4 || pin > PIN_IN_1)
+    if (pin < 0 || pin > 3)
     {
         return LOW;
     }
 
-    return m_MCP->digitalRead(pin);
+    return m_MCP->digitalRead(PINS_INPUTS[pin]);
 }
 
 /**
  * @brief Write to the relay outputs of the IO board.
  * 
- * @param pin Pin number [PIN_RELAY_1 .. 4]
+ * @param pin Pin number [0 .. 4]
  * @param state HIGH or LOW
  */
 void Made4Home_t::digitalWrite(int pin, int state)
 {
-    if (pin < PIN_RELAY_1 || pin > PIN_RELAY_4)
+    if (pin < 0 || pin > 3)
     {
         return;
     }
 
-    m_MCP->digitalWrite(pin, state);
+    m_MCP->digitalWrite(PINS_RELAYS[pin], state);
 }
 
 /**

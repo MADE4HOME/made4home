@@ -238,10 +238,10 @@ void loop()
 
         // Time controlled process.
         OptoInputsMessage = "[";
-        OptoInputsMessage += String(Made4Home.digitalRead(PIN_IN_1) == 0) + ", ";
-        OptoInputsMessage += String(Made4Home.digitalRead(PIN_IN_2) == 0) + ", ";
-        OptoInputsMessage += String(Made4Home.digitalRead(PIN_IN_3) == 0) + ", ";
-        OptoInputsMessage += String(Made4Home.digitalRead(PIN_IN_4) == 0);
+        OptoInputsMessage += String(Made4Home.digitalRead(0) == 0) + ", ";
+        OptoInputsMessage += String(Made4Home.digitalRead(1) == 0) + ", ";
+        OptoInputsMessage += String(Made4Home.digitalRead(2) == 0) + ", ";
+        OptoInputsMessage += String(Made4Home.digitalRead(3) == 0);
         OptoInputsMessage += "]";
         MQTTClient_g->publish(InputsTopic_g, OptoInputsMessage.c_str());
         Serial.println(OptoInputsMessage);
@@ -388,12 +388,12 @@ void mqtt_msg_cb(char *topic, byte *payload, unsigned int length)
         if(messageTemp == STATE_ON)
         {
             Serial.println(STATE_ON);
-            Made4Home.digitalWrite(PIN_RELAY_1, HIGH);
+            Made4Home.digitalWrite(0, HIGH);
         }
         else if(messageTemp == STATE_OFF)
         {
             Serial.println(STATE_OFF);
-            Made4Home.digitalWrite(PIN_RELAY_1, LOW);
+            Made4Home.digitalWrite(0, LOW);
         }
     }
 
@@ -404,12 +404,12 @@ void mqtt_msg_cb(char *topic, byte *payload, unsigned int length)
         if(messageTemp == STATE_ON)
         {
             Serial.println(STATE_ON);
-            Made4Home.digitalWrite(PIN_RELAY_2, HIGH);
+            Made4Home.digitalWrite(1, HIGH);
         }
         else if(messageTemp == STATE_OFF)
         {
             Serial.println(STATE_OFF);
-            Made4Home.digitalWrite(PIN_RELAY_2, LOW);
+            Made4Home.digitalWrite(1, LOW);
         }
     }
 
@@ -420,12 +420,12 @@ void mqtt_msg_cb(char *topic, byte *payload, unsigned int length)
         if(messageTemp == STATE_ON)
         {
             Serial.println(STATE_ON);
-            Made4Home.digitalWrite(PIN_RELAY_3, HIGH);
+            Made4Home.digitalWrite(2, HIGH);
         }
         else if(messageTemp == STATE_OFF)
         {
             Serial.println(STATE_OFF);
-            Made4Home.digitalWrite(PIN_RELAY_3, LOW);
+            Made4Home.digitalWrite(2, LOW);
         }
     }
 
@@ -436,12 +436,12 @@ void mqtt_msg_cb(char *topic, byte *payload, unsigned int length)
         if(messageTemp == STATE_ON)
         {
             Serial.println(STATE_ON);
-            Made4Home.digitalWrite(PIN_RELAY_4, HIGH);
+            Made4Home.digitalWrite(3, HIGH);
         }
         else if(messageTemp == STATE_OFF)
         {
             Serial.println(STATE_OFF);
-            Made4Home.digitalWrite(PIN_RELAY_4, LOW);
+            Made4Home.digitalWrite(3, LOW);
         }
     }
 }

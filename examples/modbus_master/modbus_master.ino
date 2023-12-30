@@ -32,6 +32,8 @@ SOFTWARE.
 
 #define MB_SLAVE_ID 2
 
+#define MB_TIMEOUT_MS 500
+
 #define MB_REG_START 0
 
 #define MB_REG_COUNT 8
@@ -41,28 +43,14 @@ SOFTWARE.
 #pragma region Headers
 
 #include "made4home.h"
+#include "FxTimer.h"
 
-// Include the header for the ModbusClient RTU style
 #include "ModbusClientRTU.h"
 #include "Logging.h"
-
-#include "FxTimer.h"
 
 #pragma endregion
 
 #pragma region Variables
-
-/**
- * @brief Data ready flag.
- * 
- */
-bool DataReadyFlag_g = false;
-
-/**
- * @brief Response values.
- * 
- */
-vector<uint8_t> Values_g;
 
 /**
  * @brief Request time.
@@ -71,7 +59,7 @@ vector<uint8_t> Values_g;
 uint32_t RequestTime_g;
 
 /**
- * @brief The RS485 module has no halfduplex, so the parameter with the DE/RE pin is required!
+ * @brief The RS485 module has no half-duplex, so the parameter with the DE/RE pin is required!
  * 
  */
 ModbusClientRTU *ModbusClientRTU_g;
@@ -109,30 +97,22 @@ void setup()
     Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
     while (!Serial) {}
 
+    // Setup the board IO.
     Made4Home.setup();
-
-    for (int i = 1; i <= MB_REG_COUNT*2; i++)
-    {
-      Values_g.push_back(i);
-    }
- 
-    Serial.println("__ OK __");
    
     // Set up Serial2 connected to Modbus RTU
     RTUutils::prepareHardwareSerial(Serial2);
     Serial2.begin(MB_BAUDRATE, SERIAL_8N1, PIN_RS485_RX, PIN_RS485_TX);
 
+    // Set up ModbusRTU client.
     ModbusClientRTU_g = new ModbusClientRTU(PIN_RS485_EN);
 
-    // Set up ModbusRTU client.
     // - provide onData handler function
-    // ModbusClientRTU_g->onResponseHandler(&handleResponse);
-    // - provide onData handler function
-    ModbusClientRTU_g->onDataHandler(&handleData);
+    ModbusClientRTU_g->onResponseHandler(&handleResponse);
     // - provide onError handler function
     ModbusClientRTU_g->onErrorHandler(&handleError);
-    // Set message timeout to 2000ms
-    ModbusClientRTU_g->setTimeout(2000);
+    // Set message timeout to 500ms
+    ModbusClientRTU_g->setTimeout(MB_TIMEOUT_MS);
     // Start ModbusRTU background task
     ModbusClientRTU_g->begin(Serial2);
 
@@ -149,56 +129,37 @@ void loop()
     {
         UpdateTimer_g->updateLastTime();
         UpdateTimer_g->clear();
-
-        // Yes.
-        DataReadyFlag_g = false;
-
-        // Issue the request
-        // Error ErrorL = ModbusClientRTU_g->addRequest((uint32_t)millis(), MB_SLAVE_ID, READ_COIL, MB_REG_START, MB_REG_COUNT);
-        // if (ErrorL!=SUCCESS)
-        // {
-        //   ModbusError e(ErrorL);
-        //   LOG_E("Error creating request: %02X - %s\n", (int)e, (const char *)e);
-        // }
-
+        
         // Issue the request
         Error ErrorL = ModbusClientRTU_g->addRequest((uint32_t)millis(), MB_SLAVE_ID, READ_DISCR_INPUT, MB_REG_START, MB_REG_COUNT);
         if (ErrorL!=SUCCESS)
         {
-          ModbusError e(ErrorL);
-          LOG_E("Error creating request: %02X - %s\n", (int)e, (const char *)e);
+            ModbusError e(ErrorL);
+            LOG_E("Error creating request: %02X - %s\n", (int)e, (const char *)e);
         }
-
-        // // Issue the request
-        // ErrorL = ModbusClientRTU_g->addRequest((uint32_t)millis(), MB_SLAVE_ID, READ_INPUT_REGISTER, MB_REG_START, MB_REG_COUNT);
-        // if (ErrorL!=SUCCESS)
-        // {
-        //   ModbusError e(ErrorL);
-        //   LOG_E("Error creating request: %02X - %s\n", (int)e, (const char *)e);
-        // }
-
-        // // Issue the request
-        // ErrorL = ModbusClientRTU_g->addRequest((uint32_t)millis(), MB_SLAVE_ID, READ_HOLD_REGISTER, MB_REG_START, MB_REG_COUNT);
-        // if (ErrorL!=SUCCESS)
-        // {
-        //   ModbusError e(ErrorL);
-        //   LOG_E("Error creating request: %02X - %s\n", (int)e, (const char *)e);
-        // }
-    }
-    else
-    {
-        // No, but we may have another response
-        if (DataReadyFlag_g)
+        
+        for (int index = 0; index < PINS_INPUTS_COUNT; index++)
         {
-            DataReadyFlag_g = false;
-
-            // We do. Print out the data
-            // Serial.printf("Requested at %8.3fs:\n", RequestTime_g / 1000.0);
-            // for (uint8_t i = 0; i < MB_REG_COUNT * 2; ++i)
-            // {
-            //   Serial.printf("   %04X: %i\n", i + MB_REG_START, Values_g[i]);
-            // }
-            // Serial.printf("\r\n\r\n");
+            if (Made4Home.digitalRead(index) == HIGH)
+            {
+                // Issue the request
+                Error ErrorL1 = ModbusClientRTU_g->addRequest((uint32_t)millis(), MB_SLAVE_ID, WRITE_COIL, index, 0x0000);
+                if (ErrorL1!=SUCCESS)
+                {
+                  ModbusError e(ErrorL1);
+                  LOG_E("Error creating request: %02X - %s\n", (int)e, (const char *)e);
+                }              
+            }
+            else
+            {
+                // Issue the request
+                Error ErrorL2 = ModbusClientRTU_g->addRequest((uint32_t)millis(), MB_SLAVE_ID, WRITE_COIL, index, 0xFF00);
+                if (ErrorL2!=SUCCESS)
+                {
+                  ModbusError e(ErrorL2);
+                  LOG_E("Error creating request: %02X - %s\n", (int)e, (const char *)e);
+                }              
+            }
         }
     }
 }
@@ -211,71 +172,23 @@ void loop()
  * @param response Received response message.
  * @param token Request's token.
  */
-void handleData(ModbusMessage response, uint32_t token) 
-{
-  // // First value is on pos 3, after server ID, function code and length byte
-  // uint16_t offs = 0;
-
-  // // The device has values all as IEEE754 float32 in two consecutive registers
-  // // Read the requested in a loop
-  // for (uint8_t i = 0; i < MB_REG_COUNT; ++i)
-  // {
-  //   response.get(i, Values_g[i]);
-  // }
-
-  for (uint8_t i = 0; i < response.size(); ++i)
-  {
-    // response.get(i, Values_g[i]);
-    // Values_g[i] = response[i];
-    Serial.printf("%02X: %02X, ", i, response[i]);
-  }
-
-  Serial.println();
-
-
-  // uint16_t addr, words;
-  // response.get(2, addr);
-  // response.get(4, words);
-  // Serial.print("Addr: ");
-  // Serial.print(addr);
-  // Serial.print(" Word: ");
-  // Serial.println(words);
-  Serial.println("handleData");
-
-  // Signal "data is complete"
-  RequestTime_g = token;
-  DataReadyFlag_g = true;
-}
-
 void handleResponse(ModbusMessage response, uint32_t token) 
 {
-  // // First value is on pos 3, after server ID, function code and length byte
-  // uint16_t offs = 0;
+    static uint8_t FunctionCodeL = 0;
+    static uint8_t InputsL = 0;
 
-  // // The device has values all as IEEE754 float32 in two consecutive registers
-  // // Read the requested in a loop
-  for (uint8_t i = 0; i < response.size(); ++i)
-  {
-    // response.get(i, Values_g[i]);
-    // Values_g[i] = response[i];
-    Serial.printf("%02X: %02X, ", i, response[i]);
-  }
+    // Get FC.
+    FunctionCodeL = response.getFunctionCode();
 
-  Serial.println();
-
-  
-  // uint16_t addr, words;
-  // response.get(2, addr);
-  // response.get(4, words);
-  // Serial.print("Addr: ");
-  // Serial.print(addr);
-  // Serial.print(" Word: ");
-  // Serial.println(words);
-  Serial.println("handleResponse");
-
-  // Signal "data is complete"
-  RequestTime_g = token;
-  DataReadyFlag_g = true;
+    // If it is READ_DISCR_INPUT
+    if (FunctionCodeL == READ_DISCR_INPUT)
+    {
+        InputsL = response[3];     
+        Made4Home.digitalWrite(0, (InputsL & 0x01) ? 1 : 0);
+        Made4Home.digitalWrite(1, (InputsL & 0x02) ? 1 : 0);
+        Made4Home.digitalWrite(2, (InputsL & 0x04) ? 1 : 0);
+        Made4Home.digitalWrite(3, (InputsL & 0x08) ? 1 : 0);
+    }
 }
 
 /**

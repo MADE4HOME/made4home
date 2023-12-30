@@ -236,10 +236,10 @@ void loop()
 
         // Time controlled process.
         OptoInputsMessage = "[";
-        OptoInputsMessage += String(Made4Home.digitalRead(0) == 0) + ", ";
-        OptoInputsMessage += String(Made4Home.digitalRead(1) == 0) + ", ";
-        OptoInputsMessage += String(Made4Home.digitalRead(2) == 0) + ", ";
-        OptoInputsMessage += String(Made4Home.digitalRead(3) == 0);
+        OptoInputsMessage += String(Made4Home.digitalRead(0)) + ", ";
+        OptoInputsMessage += String(Made4Home.digitalRead(1)) + ", ";
+        OptoInputsMessage += String(Made4Home.digitalRead(2)) + ", ";
+        OptoInputsMessage += String(Made4Home.digitalRead(3));
         OptoInputsMessage += "]";
         MQTTClient_g->publish(InputsTopic_g, OptoInputsMessage.c_str());
         Serial.println(OptoInputsMessage);

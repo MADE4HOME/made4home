@@ -124,7 +124,7 @@ int Made4Home_t::digitalRead(int pin)
         return LOW;
     }
 
-    return m_MCP->digitalRead(PINS_INPUTS[pin]);
+    return !m_MCP->digitalRead(PINS_INPUTS[pin]);
 }
 
 /**

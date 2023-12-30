@@ -304,10 +304,10 @@ void do_serve()
                     ClientL.println("<h1>Made4Home WEB Server</h1>");
 
                     // Display inputs
-                    ClientL.println("<p>Input 1: " + String(Made4Home.digitalRead(0) ? STATE_OFF : STATE_ON) + "</p>");
-                    ClientL.println("<p>Input 2: " + String(Made4Home.digitalRead(1) ? STATE_OFF : STATE_ON) + "</p>");
-                    ClientL.println("<p>Input 3: " + String(Made4Home.digitalRead(2) ? STATE_OFF : STATE_ON) + "</p>");
-                    ClientL.println("<p>Input 4: " + String(Made4Home.digitalRead(3) ? STATE_OFF : STATE_ON) + "</p>");
+                    ClientL.println("<p>Input 1: " + String(Made4Home.digitalRead(0) ? STATE_ON : STATE_OFF) + "</p>");
+                    ClientL.println("<p>Input 2: " + String(Made4Home.digitalRead(1) ? STATE_ON : STATE_OFF) + "</p>");
+                    ClientL.println("<p>Input 3: " + String(Made4Home.digitalRead(2) ? STATE_ON : STATE_OFF) + "</p>");
+                    ClientL.println("<p>Input 4: " + String(Made4Home.digitalRead(3) ? STATE_ON : STATE_OFF) + "</p>");
 
                     // Display current state, and ON/OFF buttons for Relay 1.
                     ClientL.println("<p>Relay 1: " + Relay1State_g + "</p>");

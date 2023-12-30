@@ -72,7 +72,7 @@ void loop()
         // Update the output states via input states.
         for (uint8_t index = 0; index < PINS_INPUTS_COUNT; index++)
         {
-            Made4Home.digitalWrite(index, (0 == Made4Home.digitalRead(index)));
+            Made4Home.digitalWrite(index, Made4Home.digitalRead(index));
         }
     }
 }

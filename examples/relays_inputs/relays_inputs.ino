@@ -70,9 +70,9 @@ void loop()
         UpdateTimer_g->clear();
 
         // Update the output states via input states.
-        Made4Home.digitalWrite(PIN_RELAY_1, (0 == Made4Home.digitalRead(PIN_IN_1)));
-        Made4Home.digitalWrite(PIN_RELAY_2, (0 == Made4Home.digitalRead(PIN_IN_2)));
-        Made4Home.digitalWrite(PIN_RELAY_3, (0 == Made4Home.digitalRead(PIN_IN_3)));
-        Made4Home.digitalWrite(PIN_RELAY_4, (0 == Made4Home.digitalRead(PIN_IN_4)));
+        for (uint8_t index = 0; index < PINS_INPUTS_COUNT; index++)
+        {
+            Made4Home.digitalWrite(index, Made4Home.digitalRead(index));
+        }
     }
 }

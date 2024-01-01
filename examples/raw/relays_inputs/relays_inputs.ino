@@ -83,14 +83,14 @@ void setup()
       }
     }
 
-    MCP_g->pinMode(PIN_RELAY_1, OUTPUT);
-    MCP_g->pinMode(PIN_RELAY_2, OUTPUT);
-    MCP_g->pinMode(PIN_RELAY_3, OUTPUT);
-    MCP_g->pinMode(PIN_RELAY_4, OUTPUT);
-    MCP_g->pinMode(PIN_IN_1, INPUT);
-    MCP_g->pinMode(PIN_IN_2, INPUT);
-    MCP_g->pinMode(PIN_IN_3, INPUT);
-    MCP_g->pinMode(PIN_IN_4, INPUT);
+    MCP_g->pinMode(0, OUTPUT);
+    MCP_g->pinMode(1, OUTPUT);
+    MCP_g->pinMode(2, OUTPUT);
+    MCP_g->pinMode(3, OUTPUT);
+    MCP_g->pinMode(0, INPUT);
+    MCP_g->pinMode(1, INPUT);
+    MCP_g->pinMode(2, INPUT);
+    MCP_g->pinMode(3, INPUT);
 
     // Setup the update timer.
     UpdateTimer_g = new FxTimer();
@@ -106,9 +106,9 @@ void loop()
         UpdateTimer_g->updateLastTime();
         UpdateTimer_g->clear();   
         // Update the output states via input states.
-        MCP_g->digitalWrite(PIN_RELAY_1, (0 == MCP_g->digitalRead(PIN_IN_1)));
-        MCP_g->digitalWrite(PIN_RELAY_2, (0 == MCP_g->digitalRead(PIN_IN_2)));
-        MCP_g->digitalWrite(PIN_RELAY_3, (0 == MCP_g->digitalRead(PIN_IN_3)));
-        MCP_g->digitalWrite(PIN_RELAY_4, (0 == MCP_g->digitalRead(PIN_IN_4)));
+        MCP_g->digitalWrite(0, (0 == MCP_g->digitalRead(0)));
+        MCP_g->digitalWrite(1, (0 == MCP_g->digitalRead(1)));
+        MCP_g->digitalWrite(2, (0 == MCP_g->digitalRead(2)));
+        MCP_g->digitalWrite(3, (0 == MCP_g->digitalRead(3)));
     }
 }

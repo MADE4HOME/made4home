@@ -136,7 +136,7 @@ void loop()
         for (uint8_t index = 0; index < PINS_INPUTS_COUNT; index++)
         {
             InputsState_g = InputsState_g << 1;
-            InputsState_g |= Made4Home.digitalRead(PINS_INPUTS[index]);
+            InputsState_g |= Made4Home.digitalRead(index);
         }
     }
 }

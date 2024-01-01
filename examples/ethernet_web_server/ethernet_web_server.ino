@@ -233,50 +233,50 @@ void do_serve()
                     {
                         Serial.println("Relay 1 on");
                         Relay1State_g = STATE_ON;
-                        Made4Home.digitalWrite(PIN_RELAY_1, HIGH);
+                        Made4Home.digitalWrite(0, HIGH);
                     }
                     else if (Header_g.indexOf("GET /R1/off") >= 0)
                     {
                         Serial.println("Relay 1 off");
                         Relay1State_g = STATE_OFF;
-                        Made4Home.digitalWrite(PIN_RELAY_1, LOW);
+                        Made4Home.digitalWrite(0, LOW);
                     }
                     else if (Header_g.indexOf("GET /R2/on") >= 0)
                     {
                         Serial.println("Relay 2 on");
                         Relay2State_g = STATE_ON;
-                        Made4Home.digitalWrite(PIN_RELAY_2, HIGH);
+                        Made4Home.digitalWrite(1, HIGH);
                     }
                     else if (Header_g.indexOf("GET /R2/off") >= 0)
                     {
                         Serial.println("Relay 2 off");
                         Relay2State_g = STATE_OFF;
-                        Made4Home.digitalWrite(PIN_RELAY_2, LOW);
+                        Made4Home.digitalWrite(1, LOW);
                     }
                     else if (Header_g.indexOf("GET /R3/on") >= 0)
                     {
                         Serial.println("Relay 3 on");
                         Relay3State_g = STATE_ON;
-                        Made4Home.digitalWrite(PIN_RELAY_3, HIGH);
+                        Made4Home.digitalWrite(2, HIGH);
                     }
                     else if (Header_g.indexOf("GET /R3/off") >= 0)
                     {
                         Serial.println("Relay 3 off");
                         Relay3State_g = STATE_OFF;
-                        Made4Home.digitalWrite(PIN_RELAY_3, LOW);
+                        Made4Home.digitalWrite(2, LOW);
                     }
                     // turns the GPIOs on and off
                     else if (Header_g.indexOf("GET /R4/on") >= 0)
                     {
                         Serial.println("Relay 4 on");
                         Relay4State_g = STATE_ON;
-                        Made4Home.digitalWrite(PIN_RELAY_4, HIGH);
+                        Made4Home.digitalWrite(3, HIGH);
                     }
                     else if (Header_g.indexOf("GET /R4/off") >= 0)
                     {
                         Serial.println("Relay 4 off");
                         Relay4State_g = STATE_OFF;
-                        Made4Home.digitalWrite(PIN_RELAY_4, LOW);
+                        Made4Home.digitalWrite(3, LOW);
                     }
                     
                     // Display the HTML web page
@@ -304,10 +304,10 @@ void do_serve()
                     ClientL.println("<h1>Made4Home WEB Server</h1>");
 
                     // Display inputs
-                    ClientL.println("<p>Input 1: " + String(Made4Home.digitalRead(PIN_IN_1) ? STATE_OFF : STATE_ON) + "</p>");
-                    ClientL.println("<p>Input 2: " + String(Made4Home.digitalRead(PIN_IN_2) ? STATE_OFF : STATE_ON) + "</p>");
-                    ClientL.println("<p>Input 3: " + String(Made4Home.digitalRead(PIN_IN_3) ? STATE_OFF : STATE_ON) + "</p>");
-                    ClientL.println("<p>Input 4: " + String(Made4Home.digitalRead(PIN_IN_4) ? STATE_OFF : STATE_ON) + "</p>");
+                    ClientL.println("<p>Input 1: " + String(Made4Home.digitalRead(0) ? STATE_ON : STATE_OFF) + "</p>");
+                    ClientL.println("<p>Input 2: " + String(Made4Home.digitalRead(1) ? STATE_ON : STATE_OFF) + "</p>");
+                    ClientL.println("<p>Input 3: " + String(Made4Home.digitalRead(2) ? STATE_ON : STATE_OFF) + "</p>");
+                    ClientL.println("<p>Input 4: " + String(Made4Home.digitalRead(3) ? STATE_ON : STATE_OFF) + "</p>");
 
                     // Display current state, and ON/OFF buttons for Relay 1.
                     ClientL.println("<p>Relay 1: " + Relay1State_g + "</p>");

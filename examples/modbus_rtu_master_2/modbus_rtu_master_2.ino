@@ -59,7 +59,7 @@ SOFTWARE.
  * @brief The RS485 module has no half-duplex, so the parameter with the DE/RE pin is required!
  * 
  */
-ModbusClientRTU *ModbusClientRTU_g;
+ModbusClientRTU *ModbusClient_g;
 
 /** 
  * @brief Update timer instance.
@@ -106,17 +106,17 @@ void setup()
     RTUutils::prepareHardwareSerial(Serial2);
     Serial2.begin(MB_BAUDRATE, SERIAL_8N1, PIN_RS485_RX, PIN_RS485_TX);
 
-    ModbusClientRTU_g = new ModbusClientRTU(PIN_RS485_EN);
+    ModbusClient_g = new ModbusClientRTU(PIN_RS485_EN);
 
     // Set up ModbusRTU client.
     // - provide onData handler function
-    ModbusClientRTU_g->onResponseHandler(&handleResponse);
+    ModbusClient_g->onResponseHandler(&handleResponse);
     // - provide onError handler function
-    ModbusClientRTU_g->onErrorHandler(&handleError);
+    ModbusClient_g->onErrorHandler(&handleError);
     // Set message timeout to 500ms
-    ModbusClientRTU_g->setTimeout(MB_TIMEOUT_MS);
+    ModbusClient_g->setTimeout(MB_TIMEOUT_MS);
     // Start ModbusRTU background task
-    ModbusClientRTU_g->begin(Serial2);
+    ModbusClient_g->begin(Serial2);
 
     // Setup the update timer.
     UpdateTimer_g = new FxTimer();
@@ -138,7 +138,7 @@ void loop()
         UpdateTimer_g->clear();
 
         // Issue the request
-        ErrorL = ModbusClientRTU_g->addRequest((uint32_t)millis(), MB_SLAVE_ID, READ_DISCR_INPUT, MB_REG_START, MB_REG_COUNT);
+        ErrorL = ModbusClient_g->addRequest((uint32_t)millis(), MB_SLAVE_ID, READ_DISCR_INPUT, MB_REG_START, MB_REG_COUNT);
         if (ErrorL!=SUCCESS)
         {
           ModbusError e(ErrorL);
@@ -151,7 +151,7 @@ void loop()
         }
 
         // Issue the request
-        ErrorL = ModbusClientRTU_g->addRequest(
+        ErrorL = ModbusClient_g->addRequest(
             (uint32_t)millis(),
             MB_SLAVE_ID,
             WRITE_MULT_COILS,
@@ -161,8 +161,7 @@ void loop()
         {
           ModbusError e(ErrorL);
           LOG_E("Error creating request: %02X - %s\n", (int)e, (const char *)e);
-        }              
-
+        }
     }
 }
 

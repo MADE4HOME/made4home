@@ -178,9 +178,6 @@ void setup()
     // Setup the IO board.
     Made4Home.setup();
 
-    // MQTT client.
-    MQTTClient_g = new PubSubClient(WiFiClient_g);
-
     // Attach the network events.
     WiFi.onEvent(wifi_event);
 
@@ -192,6 +189,9 @@ void setup()
         PIN_ETH_PHY_MDIO,
         PIN_ETH_PHY_TYPE,
         PIN_ETH_CLK_MODE);
+
+    // MQTT client.
+    MQTTClient_g = new PubSubClient(WiFiClient_g);
 
     // Setup the update timer.
     UpdateTimer_g = new FxTimer();

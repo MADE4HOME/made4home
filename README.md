@@ -64,9 +64,17 @@ Not very different then previous secure example, here we do the same but the tra
 
  - [WiFi MQTT secure client](https://github.com/MADE4HOME/made4home/blob/develop/examples/wifi_mqtt_client_secure/wifi_mqtt_client_secure.ino)
 
-### Modbus
+### MODBUS
 
- - [RS485 MODBUS Master]()
+MODBUS is one of the oldest field-bus protocols. It provides functionalities for remote controlled devices over different medias and network types. The communication can be initiated only by the master site. So, we provide 4 examples of MODBUS Masters that initiate communication with remote I/O.
+
+ - [MODBUS-RTU Master 1 (RS485)](https://github.com/MADE4HOME/made4home/blob/develop/examples/modbus_rtu_master/modbus_rtu_master.ino)
+ - [MODBUS-RTU Master 2 (RS485)](https://github.com/MADE4HOME/made4home/blob/develop/examples/modbus_rtu_master_2/modbus_rtu_master_2.ino)
+ - [MODBUS-TCP Master 1 (Ethernet)](https://github.com/MADE4HOME/made4home/blob/develop/examples/ethernet_modbus_tcp_master/ethernet_modbus_tcp_master.ino)
+ - [MODBUS-TCP Master 1 (Wi-Fi)](https://github.com/MADE4HOME/made4home/blob/develop/examples/wifi_modbus_tcp_master/wifi_modbus_tcp_master.ino)
+
+
+
  - [RS485 MODBUS Slave]()
 
 # Contributing

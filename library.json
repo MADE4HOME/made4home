@@ -36,6 +36,9 @@
     {
       "name": "pubsubclient",
       "platform": "esp32"
+    },
+    {
+      "name": "FxTimer"
     }
   ],
   "headers": [

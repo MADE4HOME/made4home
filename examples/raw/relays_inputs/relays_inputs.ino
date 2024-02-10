@@ -26,19 +26,15 @@ SOFTWARE.
 
 #pragma region Definitions
 
-#define UART0_BAUDRATE 115200
-
-#define UPDATE_INTERVAL 1
+#define UPDATE_INTERVAL_MS 1
 
 #pragma endregion
 
 #pragma region Headers
 
 #include <Wire.h>
-
 #include "made4home.h"
 #include "FxTimer.h"
-
 #include <Adafruit_MCP23008.h> // Click here to get the library: http://librarymanager/All#Adafruit_MCP23008
 
 #pragma endregion
@@ -50,61 +46,69 @@ SOFTWARE.
  */
 FxTimer *UpdateTimer_g;
 
+/**
+ * @brief Two wire interface.
+ * 
+ */
 TwoWire *TWIOne_g;
 
+/**
+ * @brief MCP I/O expander interface.
+ * 
+ */
 Adafruit_MCP23008 *MCP_g;
 
 #pragma endregion
 
 void setup()
 {
-  // Run the UART.
-  Serial.begin(UART0_BAUDRATE);
+    // Run the UART.
+    Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
+    while (!Serial) {}
+    
+    //
+    TWIOne_g = new TwoWire(0);
+    TWIOne_g->begin(PIN_SDA_1, PIN_SCL_1);
 
-	// Setup the blink timer.
-	UpdateTimer_g = new FxTimer();
-	UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL);
-	UpdateTimer_g->updateLastTime();
-  
-  //
-  TWIOne_g = new TwoWire(0);
-  TWIOne_g->begin(PIN_SDA_1, PIN_SCL_1);
+    //
+    MCP_g = new Adafruit_MCP23008();
 
-  //
-  MCP_g = new Adafruit_MCP23008();
-
-  //
-  if (!MCP_g->begin(IO_EXPANDER_ADDRESS, TWIOne_g))
-  {
-    Serial.println("MCP23008 Error.");
-    for (;;)
+    //
+    if (!MCP_g->begin(IO_EXPANDER_ADDRESS, TWIOne_g))
     {
-      // Stop
+      Serial.println("MCP23008 Error.");
+      for (;;)
+      {
+        // Stop
+      }
     }
-  }
 
-    MCP_g->pinMode(PIN_RELAY_1, OUTPUT);
-    MCP_g->pinMode(PIN_RELAY_2, OUTPUT);
-    MCP_g->pinMode(PIN_RELAY_3, OUTPUT);
-    MCP_g->pinMode(PIN_RELAY_4, OUTPUT);
-    MCP_g->pinMode(PIN_IN_1, INPUT);
-    MCP_g->pinMode(PIN_IN_2, INPUT);
-    MCP_g->pinMode(PIN_IN_3, INPUT);
-    MCP_g->pinMode(PIN_IN_4, INPUT);
+    MCP_g->pinMode(0, OUTPUT);
+    MCP_g->pinMode(1, OUTPUT);
+    MCP_g->pinMode(2, OUTPUT);
+    MCP_g->pinMode(3, OUTPUT);
+    MCP_g->pinMode(0, INPUT);
+    MCP_g->pinMode(1, INPUT);
+    MCP_g->pinMode(2, INPUT);
+    MCP_g->pinMode(3, INPUT);
+
+    // Setup the update timer.
+    UpdateTimer_g = new FxTimer();
+    UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL_MS);
+    UpdateTimer_g->updateLastTime();
 }
 
 void loop()
 {
-  UpdateTimer_g->update();
-  if(UpdateTimer_g->expired())
-  {
-    UpdateTimer_g->updateLastTime();
-    UpdateTimer_g->clear();
-
-    // Update the output states via input states.
-    MCP_g->digitalWrite(PIN_RELAY_1, (0 == MCP_g->digitalRead(PIN_IN_1)));
-    MCP_g->digitalWrite(PIN_RELAY_2, (0 == MCP_g->digitalRead(PIN_IN_2)));
-    MCP_g->digitalWrite(PIN_RELAY_3, (0 == MCP_g->digitalRead(PIN_IN_3)));
-    MCP_g->digitalWrite(PIN_RELAY_4, (0 == MCP_g->digitalRead(PIN_IN_4)));
-  }
+    UpdateTimer_g->update();
+    if(UpdateTimer_g->expired())
+    {
+        UpdateTimer_g->updateLastTime();
+        UpdateTimer_g->clear();   
+        // Update the output states via input states.
+        MCP_g->digitalWrite(0, (0 == MCP_g->digitalRead(0)));
+        MCP_g->digitalWrite(1, (0 == MCP_g->digitalRead(1)));
+        MCP_g->digitalWrite(2, (0 == MCP_g->digitalRead(2)));
+        MCP_g->digitalWrite(3, (0 == MCP_g->digitalRead(3)));
+    }
 }

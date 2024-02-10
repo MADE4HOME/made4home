@@ -55,10 +55,10 @@ uint8_t State_g;
 
 void setup()
 {
-	// Setup the blink timer.
-	UpdateTimer_g = new FxTimer();
-	UpdateTimer_g->setExpirationTime(BLINK_INTERVAL);
-	UpdateTimer_g->updateLastTime();
+    // Setup the update timer.
+    UpdateTimer_g = new FxTimer();
+    UpdateTimer_g->setExpirationTime(BLINK_INTERVAL);
+    UpdateTimer_g->updateLastTime();
 
     // Setup the IO board.
     Made4Home.setup();

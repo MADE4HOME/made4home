@@ -37,10 +37,13 @@ SOFTWARE.
 #include <ETH.h>
 
 #include <WiFi.h>
-
-#include "made4home.h"
+#include <WiFiClientSecure.h>
 
 #include <PubSubClient.h>
+#include <ArduinoECCX08.h>
+#include <utility/ECCX08SelfSignedCert.h>
+
+#include "made4home.h"
 
 #include "FxTimer.h"
 
@@ -121,7 +124,7 @@ const char *InputsTopic_g = "made4home/inputs";
  * @brief WiFi client.
  * 
  */
-WiFiClient WiFiClient_g;
+WiFiClientSecure WiFiClient_g;
 
 /**
  * @brief MQTT client.
@@ -144,6 +147,12 @@ static bool EthernetConnected_g = false;
 #pragma endregion
 
 #pragma region Prototypes
+
+/**
+ * @brief Prepare crypto element for work.
+ * 
+ */
+void prepare_crypto_element();
 
 /**
  * @brief Network event state handler.
@@ -178,6 +187,15 @@ void setup()
     // Setup the IO board.
     Made4Home.setup();
 
+    prepare_crypto_element();
+    
+    // Set up MQTT over SSL with ATECC508A certificate
+    WiFiClient_g.setCACert((const char *)ECCX08SelfSignedCert.bytes());
+
+    // Setup MQTT client.
+    MQTTClient_g = new PubSubClient(WiFiClient_g);
+    MQTTClient_g->setServer(ServerHost_g, ServerPort_g);
+
     // Attach the network events.
     WiFi.onEvent(wifi_event);
 
@@ -189,9 +207,6 @@ void setup()
         PIN_ETH_PHY_MDIO,
         PIN_ETH_PHY_TYPE,
         PIN_ETH_CLK_MODE);
-
-    // MQTT client.
-    MQTTClient_g = new PubSubClient(WiFiClient_g);
 
     // Setup the update timer.
     UpdateTimer_g = new FxTimer();
@@ -234,6 +249,24 @@ void loop()
 }
 
 #pragma region Functions
+
+/**
+ * @brief Prepare crypto element for work.
+ * 
+ */
+void prepare_crypto_element()
+{
+    // Setup secure element.
+    if (!ECCX08.begin())
+    {
+        Serial.println("No ECCX08 present!");
+        while (1);
+    }
+    // reconstruct the self signed cert
+    ECCX08SelfSignedCert.beginReconstruction(0, 8);
+    ECCX08SelfSignedCert.setCommonName(ECCX08.serialNumber());
+    ECCX08SelfSignedCert.endReconstruction();
+}
 
 /**
  * @brief Network event state handler.

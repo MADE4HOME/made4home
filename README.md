@@ -9,9 +9,9 @@ The framework depends on different hardware submodules that are part of the MADE
 We will provide links to libraries that we choose. The reasons to choose these libraries are because they are from the same provider and are with the same code quality.
 
  - [Relay Outputs and Opto Inputs (MCP23008)](https://github.com/adafruit/Adafruit-MCP23017-Arduino-Library)
- - [LEDs](https://github.com/adafruit/Adafruit_NeoPixel)
- - [Crypto Module](https://github.com/sparkfun/SparkFun_ATECCX08a_Arduino_Library)
- - [RS485 Interface](https://github.com/eModbus/eModbus)
+ - [LEDs (NeoPixel)](https://github.com/adafruit/Adafruit_NeoPixel)
+ - [Crypto CoProcessor (ATECC508A)](https://github.com/arduino-libraries/ArduinoECCX08)
+ - [Modbus (RS485)](https://github.com/eModbus/eModbus)
  - [MQTT Client](https://github.com/knolleary/pubsubclient)
 
 ## Examples
@@ -46,7 +46,11 @@ Of course, at the other side of the line someone should answer our calls. That i
 
 On the other hand, the most popular protocol in our "IoT" days is not only HTTP but, of course, MQTT (Message Que Telemetry Transport). This protocol serves thousands of devices all over the world. That's why we provide an example for it.
 
- - [ETH MQTT client]()
+ - [ETH MQTT client](https://github.com/MADE4HOME/made4home/blob/develop/examples/ethernet_mqtt_client/ethernet_mqtt_client.ino)
+
+Of course there is situations that require to have more security than just a user name and password. In this kind of situations we provide on our board a secure element [ATECC508A](https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/20005928A.pdf) cryptographic processor that can store a certificates and keys. We provide a very simple example of how to use it. For further usage we recommend to use the documentation provided by [Microchip](https://www.microchip.com/en-us/product/ATECC508A).
+
+ - [ETH MQTT secure client](https://github.com/MADE4HOME/made4home/blob/develop/examples/ethernet_mqtt_client_secure/ethernet_mqtt_client_secure.ino)
 
 ### Wi-Fi
 
@@ -56,9 +60,21 @@ Later in the development of the Internet and Internet of Things, the industry br
  - [WiFi HTTP server](https://github.com/MADE4HOME/made4home/blob/develop/examples/wifi_web_server/wifi_web_server.ino)
  - [WiFi MQTT client](https://github.com/MADE4HOME/made4home/blob/develop/examples/wifi_mqtt_clients/wifi_mqtt_clients.ino)
 
-### Modbus
+Not very different then previous secure example, here we do the same but the transport interface is WiFi.
 
- - [RS485 MODBUS Master]()
+ - [WiFi MQTT secure client](https://github.com/MADE4HOME/made4home/blob/develop/examples/wifi_mqtt_client_secure/wifi_mqtt_client_secure.ino)
+
+### MODBUS
+
+MODBUS is one of the oldest field-bus protocols. It provides functionalities for remote controlled devices over different medias and network types. The communication can be initiated only by the master site. So, we provide 4 examples of MODBUS Masters that initiate communication with remote I/O.
+
+ - [MODBUS-RTU Master 1 (RS485)](https://github.com/MADE4HOME/made4home/blob/develop/examples/modbus_rtu_master/modbus_rtu_master.ino)
+ - [MODBUS-RTU Master 2 (RS485)](https://github.com/MADE4HOME/made4home/blob/develop/examples/modbus_rtu_master_2/modbus_rtu_master_2.ino)
+ - [MODBUS-TCP Master 1 (Ethernet)](https://github.com/MADE4HOME/made4home/blob/develop/examples/ethernet_modbus_tcp_master/ethernet_modbus_tcp_master.ino)
+ - [MODBUS-TCP Master 1 (Wi-Fi)](https://github.com/MADE4HOME/made4home/blob/develop/examples/wifi_modbus_tcp_master/wifi_modbus_tcp_master.ino)
+
+
+
  - [RS485 MODBUS Slave]()
 
 # Contributing

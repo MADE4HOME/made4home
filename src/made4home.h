@@ -46,22 +46,22 @@ SOFTWARE.
 /**
  * @brief Pin of the Relay 1 at the I2C expander.
  */
-#define PIN_RELAY_1 4
+#define PIN_RELAY_1 7
 
 /**
  * @brief Pin of the Relay 2 at the I2C expander.
  */
-#define PIN_RELAY_2 5
+#define PIN_RELAY_2 6
 
 /**
  * @brief Pin of the Relay 3 at the I2C expander.
  */
-#define PIN_RELAY_3 6
+#define PIN_RELAY_3 5
 
 /**
  * @brief Pin of the Relay 4 at the I2C expander.
  */
-#define PIN_RELAY_4 7
+#define PIN_RELAY_4 4
 
 /**
  * @brief Pin of the Input 1 at the I2C expander.

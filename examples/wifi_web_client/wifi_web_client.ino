@@ -44,22 +44,22 @@ SOFTWARE.
 
 #pragma region Variables
 
-/** 
+/**
  * @brief Update timer instance.
  */
 FxTimer *UpdateTimer_g;
 
 /**
  * @brief Replace with your network credentials.
- * 
+ *
  */
-const char* SSID_g = DEFAULT_SSID;
+const char *SSID_g = DEFAULT_SSID;
 
 /**
  * @brief Replace with your network credentials.
- * 
+ *
  */
-const char* PASS_g = DEFAULT_PASS;
+const char *PASS_g = DEFAULT_PASS;
 
 #pragma endregion
 
@@ -67,17 +67,17 @@ const char* PASS_g = DEFAULT_PASS;
 
 /**
  * @brief Connect to WiFi.
- * 
+ *
  */
 void connect_to_wifi();
 
 /**
  * @brief Do HTTP request.
- * 
+ *
  * @param host Host
  * @param port Port
  */
-void do_client(const char* host, uint16_t port);
+void do_client(const char *host, uint16_t port);
 
 #pragma endregion
 
@@ -85,14 +85,16 @@ void setup()
 {
     // Setup the serial port.
     Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
-    while (!Serial) {}
+    while (!Serial)
+    {
+    }
 
     // Setup the IO board.
     Made4Home.setup();
 
     // Connect to Wi-Fi network with SSID and password.
     connect_to_wifi();
-    
+
     // Setup the update timer.
     UpdateTimer_g = new FxTimer();
     UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL_MS);
@@ -102,10 +104,10 @@ void setup()
 void loop()
 {
     UpdateTimer_g->update();
-    if(UpdateTimer_g->expired())
+    if (UpdateTimer_g->expired())
     {
         UpdateTimer_g->updateLastTime();
-        UpdateTimer_g->clear();   
+        UpdateTimer_g->clear();
         do_client("google.com", 80);
     }
 }
@@ -114,7 +116,7 @@ void loop()
 
 /**
  * @brief Connect to WiFi.
- * 
+ *
  */
 void connect_to_wifi()
 {
@@ -134,23 +136,26 @@ void connect_to_wifi()
 
 /**
  * @brief Do HTTP request.
- * 
+ *
  * @param host Host
  * @param port Port
  */
-void do_client(const char* host, uint16_t port)
+void do_client(const char *host, uint16_t port)
 {
     Serial.print("\nconnecting to ");
     Serial.println(host);
 
     WiFiClient client;
-    if (!client.connect(host, port)) {
+    if (!client.connect(host, port))
+    {
         Serial.println("connection failed");
         return;
     }
     client.printf("GET / HTTP/1.1\r\nHost: %s\r\n\r\n", host);
-    while (client.connected() && !client.available());
-    while (client.available()) {
+    while (client.connected() && !client.available())
+        ;
+    while (client.available())
+    {
         Serial.write(client.read());
     }
 

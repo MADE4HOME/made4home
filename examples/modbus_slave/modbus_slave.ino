@@ -24,7 +24,6 @@ SOFTWARE.
 
 */
 
-
 #pragma region Definitions
 
 #define UPDATE_INTERVAL_MS 1
@@ -53,11 +52,11 @@ SOFTWARE.
 
 /**
  * @brief Create a ModbusRTU server instance listening with 2000ms timeout.
- * 
+ *
  */
 ModbusServerRTU *MBserver_g;
 
-/** 
+/**
  * @brief Update timer instance.
  */
 FxTimer *UpdateTimer_g;
@@ -70,25 +69,25 @@ uint8_t InputsState_g = 0;
 
 /**
  * @brief FC01: worker do serve Modbus function code 0x03 (READ_HOLD_REGISTER).
- * 
- * @param request 
- * @return ModbusMessage 
+ *
+ * @param request
+ * @return ModbusMessage
  */
 ModbusMessage FC01(ModbusMessage request);
 
 /**
  * @brief FC03: worker do serve Modbus function code 0x03 (READ_HOLD_REGISTER).
- * 
- * @param request 
- * @return ModbusMessage 
+ *
+ * @param request
+ * @return ModbusMessage
  */
 ModbusMessage FC02(ModbusMessage request);
 
 /**
  * @brief FC03: worker do serve Modbus function code 0x03 (READ_HOLD_REGISTER).
- * 
- * @param request 
- * @return ModbusMessage 
+ *
+ * @param request
+ * @return ModbusMessage
  */
 ModbusMessage FC03(ModbusMessage request);
 
@@ -96,49 +95,51 @@ ModbusMessage FC03(ModbusMessage request);
 
 void setup()
 {
-    // Init Serial monitor
-    Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
-    while (!Serial) {}
-    Serial.println("__ OK __");
+  // Init Serial monitor
+  Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
+  while (!Serial)
+  {
+  }
+  Serial.println("__ OK __");
 
-    Made4Home.setup();
+  Made4Home.setup();
 
-    MBserver_g = new ModbusServerRTU(MB_TIMEOUT, PIN_RS485_EN);
+  MBserver_g = new ModbusServerRTU(MB_TIMEOUT, PIN_RS485_EN);
 
-    // Set up Serial2 connected to Modbus RTU
-    RTUutils::prepareHardwareSerial(Serial2);
-    Serial2.begin(MB_BAUDRATE, SERIAL_8N1, PIN_RS485_RX, PIN_RS485_TX);
+  // Set up Serial2 connected to Modbus RTU
+  RTUutils::prepareHardwareSerial(Serial2);
+  Serial2.begin(MB_BAUDRATE, SERIAL_8N1, PIN_RS485_RX, PIN_RS485_TX);
 
-    // Register served function code worker for server 1, FC 0x03
-    MBserver_g->registerWorker(MB_SLAVE_ID, READ_COIL, &FC01);
-    // Register served function code worker for server 1, FC 0x03
-    MBserver_g->registerWorker(MB_SLAVE_ID, READ_DISCR_INPUT, &FC02);
-    // Register served function code worker for server 1, FC 0x03
-    MBserver_g->registerWorker(MB_SLAVE_ID, READ_HOLD_REGISTER, &FC03);
+  // Register served function code worker for server 1, FC 0x03
+  MBserver_g->registerWorker(MB_SLAVE_ID, READ_COIL, &FC01);
+  // Register served function code worker for server 1, FC 0x03
+  MBserver_g->registerWorker(MB_SLAVE_ID, READ_DISCR_INPUT, &FC02);
+  // Register served function code worker for server 1, FC 0x03
+  MBserver_g->registerWorker(MB_SLAVE_ID, READ_HOLD_REGISTER, &FC03);
 
-    // Start ModbusRTU background task
-    MBserver_g->begin(Serial2);
+  // Start ModbusRTU background task
+  MBserver_g->begin(Serial2);
 
-    // Setup the update timer.
-    UpdateTimer_g = new FxTimer();
-    UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL_MS);
-    UpdateTimer_g->updateLastTime();
+  // Setup the update timer.
+  UpdateTimer_g = new FxTimer();
+  UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL_MS);
+  UpdateTimer_g->updateLastTime();
 }
 
 void loop()
 {
-    UpdateTimer_g->update();
-    if(UpdateTimer_g->expired())
-    {
-        UpdateTimer_g->updateLastTime();
-        UpdateTimer_g->clear();
+  UpdateTimer_g->update();
+  if (UpdateTimer_g->expired())
+  {
+    UpdateTimer_g->updateLastTime();
+    UpdateTimer_g->clear();
 
-        for (uint8_t index = 0; index < PINS_INPUTS_COUNT; index++)
-        {
-            InputsState_g = InputsState_g << 1;
-            InputsState_g |= Made4Home.digitalRead(index);
-        }
+    for (uint8_t index = 0; index < PINS_INPUTS_COUNT; index++)
+    {
+      InputsState_g = InputsState_g << 1;
+      InputsState_g |= Made4Home.digitalRead(index);
     }
+  }
 }
 
 #pragma region Functions
@@ -146,27 +147,30 @@ void loop()
 // FC03: worker do serve Modbus function code 0x03 (READ_HOLD_REGISTER)
 ModbusMessage FC01(ModbusMessage request)
 {
-  uint16_t address;           // requested register address
-  uint16_t words;             // requested number of registers
-  ModbusMessage response;     // response message to be sent back
+  uint16_t address;       // requested register address
+  uint16_t words;         // requested number of registers
+  ModbusMessage response; // response message to be sent back
 
   // get request values
   request.get(2, address);
   request.get(4, words);
 
   // Address and words valid? We assume 10 registers here for demo
-  if (address && words && (address + words) <= 10) {
+  if (address && words && (address + words) <= 10)
+  {
     // Looks okay. Set up message with serverID, FC and length of data
     response.add(request.getServerID(), request.getFunctionCode(), (uint8_t)(words * 2));
     // Fill response with requested data
-    for (uint16_t i = address; i < address + words; ++i) {
+    for (uint16_t i = address; i < address + words; ++i)
+    {
       Serial.print("ADD: ");
       Serial.println(i);
       response.add(i);
     }
     Serial.println("-----------------------");
-
-  } else {
+  }
+  else
+  {
     // No, either address or words are outside the limits. Set up error response.
     // response.setError(request.getServerID(), request.getFunctionCode(), ILLEGAL_DATA_ADDRESS);
   }
@@ -176,57 +180,60 @@ ModbusMessage FC01(ModbusMessage request)
 // FC01: worker do serve Modbus function code 0x03 (READ_HOLD_REGISTER)
 ModbusMessage FC02(ModbusMessage request)
 {
-    uint16_t address;           // requested register address
-    uint16_t words;             // requested number of registers
-    ModbusMessage response;     // response message to be sent back
-    
-    // get request values
-    request.get(2, address);
-    request.get(4, words);
-    
-    // Address and words valid? We assume 8 registers here for demo.
-    if (address && words && (address + words) <= 8)
-    {
-        // Looks okay. Set up message with serverID, FC and length of data
-        response.add(request.getServerID(), request.getFunctionCode(), (uint8_t)(words * 2));
-        
-        // Fill response with requested data
-        response.add(0x00);
-        response.add(InputsState_g);
-    }
-    else
-    {
-        // No, either address or words are outside the limits. Set up error response.
-        // response.setError(request.getServerID(), request.getFunctionCode(), ILLEGAL_DATA_ADDRESS);
-    }
+  uint16_t address;       // requested register address
+  uint16_t words;         // requested number of registers
+  ModbusMessage response; // response message to be sent back
 
-    return response;
+  // get request values
+  request.get(2, address);
+  request.get(4, words);
+
+  // Address and words valid? We assume 8 registers here for demo.
+  if (address && words && (address + words) <= 8)
+  {
+    // Looks okay. Set up message with serverID, FC and length of data
+    response.add(request.getServerID(), request.getFunctionCode(), (uint8_t)(words * 2));
+
+    // Fill response with requested data
+    response.add(0x00);
+    response.add(InputsState_g);
+  }
+  else
+  {
+    // No, either address or words are outside the limits. Set up error response.
+    // response.setError(request.getServerID(), request.getFunctionCode(), ILLEGAL_DATA_ADDRESS);
+  }
+
+  return response;
 }
 
 // FC03: worker do serve Modbus function code 0x03 (READ_HOLD_REGISTER)
 ModbusMessage FC03(ModbusMessage request)
 {
-  uint16_t address;           // requested register address
-  uint16_t words;             // requested number of registers
-  ModbusMessage response;     // response message to be sent back
+  uint16_t address;       // requested register address
+  uint16_t words;         // requested number of registers
+  ModbusMessage response; // response message to be sent back
 
   // get request values
   request.get(2, address);
   request.get(4, words);
 
   // Address and words valid? We assume 10 registers here for demo
-  if (address && words && (address + words) <= 10) {
+  if (address && words && (address + words) <= 10)
+  {
     // Looks okay. Set up message with serverID, FC and length of data
     response.add(request.getServerID(), request.getFunctionCode(), (uint8_t)(words * 2));
     // Fill response with requested data
-    for (uint16_t i = address; i < address + words; ++i) {
+    for (uint16_t i = address; i < address + words; ++i)
+    {
       Serial.print("ADD: ");
       Serial.println(i);
       response.add(i);
     }
     Serial.println("-----------------------");
-
-  } else {
+  }
+  else
+  {
     // No, either address or words are outside the limits. Set up error response.
     // response.setError(request.getServerID(), request.getFunctionCode(), ILLEGAL_DATA_ADDRESS);
   }

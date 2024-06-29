@@ -51,20 +51,20 @@ SOFTWARE.
 
 #pragma region Variables
 
-/** 
+/**
  * @brief Update timer instance.
  */
 FxTimer *UpdateTimer_g;
 
 /**
  * @brief MQTT server domain.
- * 
+ *
  */
 const char *ServerHost_g = "home.iot.loc";
 
 /**
  * @brief MQTT server port.
- * 
+ *
  */
 int ServerPort_g = 1883;
 
@@ -72,13 +72,13 @@ int ServerPort_g = 1883;
 
 /**
  * @brief Replace with your network credentials.
- * 
+ *
  */
 const char *ClientName_g = "emqx";
 
 /**
  * @brief Replace with your network credentials.
- * 
+ *
  */
 const char *ClientPass_g = "public";
 
@@ -86,61 +86,61 @@ const char *ClientPass_g = "public";
 
 /**
  * @brief Replace with your network credentials.
- * 
+ *
  */
 const char *GreetingsTopic_g = "made4home/greetings";
 
 /**
  * @brief Chanel 1 relay.
- * 
+ *
  */
 const char *Output1Topic_g = "made4home/output/1";
 
 /**
  * @brief Chanel 2 relay.
- * 
+ *
  */
 const char *Output2Topic_g = "made4home/output/2";
 
 /**
  * @brief Chanel 3 relay.
- * 
+ *
  */
 const char *Output3Topic_g = "made4home/output/3";
 
 /**
  * @brief Chanel 4 relay.
- * 
+ *
  */
 const char *Output4Topic_g = "made4home/output/4";
 
 /**
  * @brief Replace with your network credentials.
- * 
+ *
  */
 const char *InputsTopic_g = "made4home/inputs";
 
 /**
  * @brief WiFi client.
- * 
+ *
  */
 WiFiClientSecure WiFiClient_g;
 
 /**
  * @brief MQTT client.
- * 
+ *
  */
 PubSubClient *MQTTClient_g;
 
 /**
  * @brief Opto inputs message state.
- * 
+ *
  */
 String OptoInputsMessage;
 
 /**
  * @brief Ethernet connection state.
- * 
+ *
  */
 static bool EthernetConnected_g = false;
 
@@ -150,26 +150,26 @@ static bool EthernetConnected_g = false;
 
 /**
  * @brief Prepare crypto element for work.
- * 
+ *
  */
 void prepare_crypto_element();
 
 /**
  * @brief Network event state handler.
- * 
+ *
  * @param event Event input.
  */
 void wifi_event(WiFiEvent_t event);
 
 /**
  * @brief MQTT reconnect to the server.
- * 
+ *
  */
 void mqtt_reconnect();
 
 /**
  * @brief MQTT message callback function.
- * 
+ *
  * @param topic Topic of the message.
  * @param payload Payload of the message.
  * @param length Length of the message.
@@ -182,13 +182,15 @@ void setup()
 {
     // Setup the serial port.
     Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
-    while (!Serial) {}
+    while (!Serial)
+    {
+    }
 
     // Setup the IO board.
     Made4Home.setup();
 
     prepare_crypto_element();
-    
+
     // Set up MQTT over SSL with ATECC508A certificate
     WiFiClient_g.setCACert((const char *)ECCX08SelfSignedCert.bytes());
 
@@ -226,7 +228,7 @@ void loop()
     }
 
     UpdateTimer_g->update();
-    if(UpdateTimer_g->expired())
+    if (UpdateTimer_g->expired())
     {
         UpdateTimer_g->updateLastTime();
         UpdateTimer_g->clear();
@@ -252,7 +254,7 @@ void loop()
 
 /**
  * @brief Prepare crypto element for work.
- * 
+ *
  */
 void prepare_crypto_element()
 {
@@ -260,7 +262,8 @@ void prepare_crypto_element()
     if (!ECCX08.begin())
     {
         Serial.println("No ECCX08 present!");
-        while (1);
+        while (1)
+            ;
     }
     // reconstruct the self signed cert
     ECCX08SelfSignedCert.beginReconstruction(0, 8);
@@ -270,7 +273,7 @@ void prepare_crypto_element()
 
 /**
  * @brief Network event state handler.
- * 
+ *
  * @param event Event input.
  */
 void wifi_event(WiFiEvent_t event)
@@ -279,7 +282,7 @@ void wifi_event(WiFiEvent_t event)
     {
     case ARDUINO_EVENT_ETH_START:
         Serial.println("ETH Started");
-        //set eth hostname here
+        // set eth hostname here
         ETH.setHostname("made4home");
         break;
     case ARDUINO_EVENT_ETH_CONNECTED:
@@ -314,7 +317,7 @@ void wifi_event(WiFiEvent_t event)
 
 /**
  * @brief MQTT reconnect to the server.
- * 
+ *
  */
 void mqtt_reconnect()
 {
@@ -325,7 +328,7 @@ void mqtt_reconnect()
     String client_id = "MADE4HOME-";
     client_id += String(WiFi.macAddress());
     Serial.printf("The MQTT client %s connects to the public MQTT broker\n", client_id.c_str());
-    
+
     // Loop until we're reconnected
     while (!MQTTClient_g->connected())
     {
@@ -335,7 +338,7 @@ void mqtt_reconnect()
         if (MQTTClient_g->connect(client_id.c_str(), ClientName_g, ClientPass_g))
 #else
         if (MQTTClient_g->connect(client_id.c_str()))
-#endif    
+#endif
         {
             Serial.println("connected");
 
@@ -359,7 +362,7 @@ void mqtt_reconnect()
 
 /**
  * @brief MQTT message callback function.
- * 
+ *
  * @param topic Topic of the message.
  * @param payload Payload of the message.
  * @param length Length of the message.
@@ -371,7 +374,7 @@ void mqtt_msg_cb(char *topic, byte *payload, unsigned int length)
     Serial.print(". Message: ");
     String messageTemp = "";
 
-    // Stringify the payload.    
+    // Stringify the payload.
     for (unsigned int i = 0; i < length; i++)
     {
         Serial.print((char)payload[i]);
@@ -385,12 +388,12 @@ void mqtt_msg_cb(char *topic, byte *payload, unsigned int length)
     if (String(topic) == Output1Topic_g)
     {
         Serial.print("Changing output 1 to ");
-        if(messageTemp == STATE_ON)
+        if (messageTemp == STATE_ON)
         {
             Serial.println(STATE_ON);
             Made4Home.digitalWrite(0, HIGH);
         }
-        else if(messageTemp == STATE_OFF)
+        else if (messageTemp == STATE_OFF)
         {
             Serial.println(STATE_OFF);
             Made4Home.digitalWrite(0, LOW);
@@ -401,12 +404,12 @@ void mqtt_msg_cb(char *topic, byte *payload, unsigned int length)
     else if (String(topic) == Output2Topic_g)
     {
         Serial.print("Changing output 2 to ");
-        if(messageTemp == STATE_ON)
+        if (messageTemp == STATE_ON)
         {
             Serial.println(STATE_ON);
             Made4Home.digitalWrite(1, HIGH);
         }
-        else if(messageTemp == STATE_OFF)
+        else if (messageTemp == STATE_OFF)
         {
             Serial.println(STATE_OFF);
             Made4Home.digitalWrite(1, LOW);
@@ -417,12 +420,12 @@ void mqtt_msg_cb(char *topic, byte *payload, unsigned int length)
     else if (String(topic) == Output3Topic_g)
     {
         Serial.print("Changing output 3 to ");
-        if(messageTemp == STATE_ON)
+        if (messageTemp == STATE_ON)
         {
             Serial.println(STATE_ON);
             Made4Home.digitalWrite(2, HIGH);
         }
-        else if(messageTemp == STATE_OFF)
+        else if (messageTemp == STATE_OFF)
         {
             Serial.println(STATE_OFF);
             Made4Home.digitalWrite(2, LOW);
@@ -433,12 +436,12 @@ void mqtt_msg_cb(char *topic, byte *payload, unsigned int length)
     else if (String(topic) == Output4Topic_g)
     {
         Serial.print("Changing output 4 to ");
-        if(messageTemp == STATE_ON)
+        if (messageTemp == STATE_ON)
         {
             Serial.println(STATE_ON);
             Made4Home.digitalWrite(3, HIGH);
         }
-        else if(messageTemp == STATE_OFF)
+        else if (messageTemp == STATE_OFF)
         {
             Serial.println(STATE_OFF);
             Made4Home.digitalWrite(3, LOW);

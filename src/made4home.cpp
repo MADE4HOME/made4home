@@ -28,13 +28,13 @@ SOFTWARE.
 
 /**
  * @brief Setup the IO board.
- * 
+ *
  */
 void Made4Home_t::setup()
 {
     // Create the object.
     m_LEDs = new Adafruit_NeoPixel(LED_COUNT, PIN_LEDs, NEO_GRB + NEO_KHZ800);
-    
+
     // Init NeoPixel strip object (REQUIRED)
     m_LEDs->begin();
     m_LEDs->show();
@@ -70,12 +70,12 @@ void Made4Home_t::setup()
 
 /**
  * @brief Set the color of the LEDs.
- * 
+ *
  * @param index Index of the LEDs [0-1]
  * @param r Red color. [0-255]
  * @param g Green color [0-255]
  * @param b Blue color [0-255]
- * @return * void 
+ * @return * void
  */
 void Made4Home_t::setLED(int index, int r, int g, int b)
 {
@@ -85,11 +85,11 @@ void Made4Home_t::setLED(int index, int r, int g, int b)
 
 /**
  * @brief Set the color of the L1 LED.
- * 
+ *
  * @param r Red color. [0-255]
  * @param g Green color [0-255]
  * @param b Blue color [0-255]
- * @return * void 
+ * @return * void
  */
 void Made4Home_t::setL1(int r, int g, int b)
 {
@@ -99,11 +99,11 @@ void Made4Home_t::setL1(int r, int g, int b)
 
 /**
  * @brief Set the color of the L2 LED.
- * 
+ *
  * @param r Red color. [0-255]
  * @param g Green color [0-255]
  * @param b Blue color [0-255]
- * @return * void 
+ * @return * void
  */
 void Made4Home_t::setL2(int r, int g, int b)
 {
@@ -113,7 +113,7 @@ void Made4Home_t::setL2(int r, int g, int b)
 
 /**
  * @brief Read the digital inputs of the IO board.
- * 
+ *
  * @param pin Pin number [PIN_IN_1 .. 4]
  * @return int Returns HIGH or LOW.
  */
@@ -129,7 +129,7 @@ int Made4Home_t::digitalRead(int pin)
 
 /**
  * @brief Write to the relay outputs of the IO board.
- * 
+ *
  * @param pin Pin number [0 .. 4]
  * @param state HIGH or LOW
  */
@@ -145,6 +145,6 @@ void Made4Home_t::digitalWrite(int pin, int state)
 
 /**
  * @brief Instance of the IO board abstraction.
- * 
+ *
  */
 Made4Home_t Made4Home;

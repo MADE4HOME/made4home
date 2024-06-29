@@ -43,17 +43,17 @@ SOFTWARE.
 
 #pragma region Variables
 
-/** 
+/**
  * @brief Update timer instance.
  */
 FxTimer *UpdateTimer_g;
 
-/** 
+/**
  * @brief Update timer instance.
  */
 Adafruit_NeoPixel *LEDs_g;
 
-/** 
+/**
  * @brief Blink LED state counter.
  */
 uint8_t State_g;
@@ -69,7 +69,7 @@ void setup()
 
     // Create the object.
     LEDs_g = new Adafruit_NeoPixel(LED_COUNT, PIN_LEDs, NEO_GRB + NEO_KHZ800);
-    
+
     // Init NeoPixel strip object (REQUIRED)
     LEDs_g->begin();
     LEDs_g->show();
@@ -86,46 +86,46 @@ void setup()
 
 void loop()
 {
-  UpdateTimer_g->update();
-  if(UpdateTimer_g->expired())
-  {
-    UpdateTimer_g->updateLastTime();
-    UpdateTimer_g->clear();
+    UpdateTimer_g->update();
+    if (UpdateTimer_g->expired())
+    {
+        UpdateTimer_g->updateLastTime();
+        UpdateTimer_g->clear();
 
-    // set the LED with the StateStatusLED_g of the variable:
-    if (State_g == 0)
-    {
-        LEDs_g->setPixelColor(0, 0, 0, 0);
-        LEDs_g->setPixelColor(1, 0, 0, 0);
-    }
-    else if (State_g == 1)
-    {
-        LEDs_g->setPixelColor(0, 255, 0, 0);
-        LEDs_g->setPixelColor(1, 255, 0, 0);
-    }
-    else if (State_g == 2)
-    {
-        LEDs_g->setPixelColor(0, 0, 255, 0);
-        LEDs_g->setPixelColor(1, 0, 255, 0);
-    }
-    else if (State_g == 3)
-    {
-        LEDs_g->setPixelColor(0, 0, 0, 255);
-        LEDs_g->setPixelColor(1, 0, 0, 255);
-    }
-    else if (State_g == 4)
-    {
-        LEDs_g->setPixelColor(0, 255, 255, 255);
-        LEDs_g->setPixelColor(1, 255, 255, 255);
-    }
-    else
-    {
-        LEDs_g->setPixelColor(0, 0, 0, 0);
-        LEDs_g->setPixelColor(1, 0, 0, 0);
-        State_g = 0;
-    }
+        // set the LED with the StateStatusLED_g of the variable:
+        if (State_g == 0)
+        {
+            LEDs_g->setPixelColor(0, 0, 0, 0);
+            LEDs_g->setPixelColor(1, 0, 0, 0);
+        }
+        else if (State_g == 1)
+        {
+            LEDs_g->setPixelColor(0, 255, 0, 0);
+            LEDs_g->setPixelColor(1, 255, 0, 0);
+        }
+        else if (State_g == 2)
+        {
+            LEDs_g->setPixelColor(0, 0, 255, 0);
+            LEDs_g->setPixelColor(1, 0, 255, 0);
+        }
+        else if (State_g == 3)
+        {
+            LEDs_g->setPixelColor(0, 0, 0, 255);
+            LEDs_g->setPixelColor(1, 0, 0, 255);
+        }
+        else if (State_g == 4)
+        {
+            LEDs_g->setPixelColor(0, 255, 255, 255);
+            LEDs_g->setPixelColor(1, 255, 255, 255);
+        }
+        else
+        {
+            LEDs_g->setPixelColor(0, 0, 0, 0);
+            LEDs_g->setPixelColor(1, 0, 0, 0);
+            State_g = 0;
+        }
 
-    LEDs_g->show();
-    State_g++;
-  }
+        LEDs_g->show();
+        State_g++;
+    }
 }

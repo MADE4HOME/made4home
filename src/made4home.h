@@ -121,7 +121,7 @@ SOFTWARE.
 /**
  * @brief Pin ADDR of the Ethernet.
  */
-#define PIN_ETH_PHY_ADDR  0
+#define PIN_ETH_PHY_ADDR 0
 
 /**
  * @brief Pin POWER of the Ethernet.
@@ -131,12 +131,12 @@ SOFTWARE.
 /**
  * @brief Pin MDC of the Ethernet.
  */
-#define PIN_ETH_PHY_MDC   23
+#define PIN_ETH_PHY_MDC 23
 
 /**
  * @brief Pin MDIO of the Ethernet.
  */
-#define PIN_ETH_PHY_MDIO  18
+#define PIN_ETH_PHY_MDIO 18
 
 /**
  * @brief Pin type of the Ethernet.
@@ -160,7 +160,7 @@ SOFTWARE.
 /**
  * @brief Number of the programable LEDs at the board.
  */
-#define LED_COUNT  2
+#define LED_COUNT 2
 
 #define LED_BRIGHTNESS 255
 
@@ -191,14 +191,14 @@ SOFTWARE.
 #pragma region Constants
 
 /**
- * @brief Array that holds the inputs pins definitions. 
- * 
+ * @brief Array that holds the inputs pins definitions.
+ *
  */
 const int PINS_INPUTS[PINS_INPUTS_COUNT] = {PIN_IN_1, PIN_IN_2, PIN_IN_3, PIN_IN_4};
 
 /**
  * @brief Array that holds the outputs pins definitions.
- * 
+ *
  */
 const int PINS_RELAYS[PINS_RELAYS_COUNT] = {PIN_RELAY_1, PIN_RELAY_2, PIN_RELAY_3, PIN_RELAY_4};
 
@@ -208,81 +208,79 @@ const int PINS_RELAYS[PINS_RELAYS_COUNT] = {PIN_RELAY_1, PIN_RELAY_2, PIN_RELAY_
 
 /**
  * @brief Made4Home IO board abstraction class.
- * 
+ *
  */
 class Made4Home_t
 {
-    protected:
+protected:
+    /**
+     * @brief NEO pixel instance.
+     */
+    Adafruit_NeoPixel *m_LEDs;
 
-        /** 
-         * @brief NEO pixel instance.
-         */
-        Adafruit_NeoPixel *m_LEDs;
+    /**
+     * @brief Two Wire Interface with index 0.
+     */
+    TwoWire *m_TWIOne;
 
-        /**
-         * @brief Two Wire Interface with index 0.
-         */
-        TwoWire *m_TWIOne;
+    /**
+     * @brief MCP IO chip abstraction instance.
+     */
+    Adafruit_MCP23008 *m_MCP;
 
-        /**
-         * @brief MCP IO chip abstraction instance.
-         */
-        Adafruit_MCP23008 *m_MCP;
+public:
+    /**
+     * @brief Setup the IO board.
+     *
+     */
+    void setup();
 
-    public:
+    /**
+     * @brief Set the color of the LEDs.
+     *
+     * @param index Index of the LEDs [0-1]
+     * @param r Red color. [0-255]
+     * @param g Green color [0-255]
+     * @param b Blue color [0-255]
+     * @return * void
+     */
+    void setLED(int index, int r, int g, int b);
 
-        /**
-         * @brief Setup the IO board.
-         * 
-         */
-        void setup();
+    /**
+     * @brief Set the color of the L1 LED.
+     *
+     * @param r Red color. [0-255]
+     * @param g Green color [0-255]
+     * @param b Blue color [0-255]
+     * @return * void
+     */
+    void setL1(int r, int g, int b);
 
-        /**
-         * @brief Set the color of the LEDs.
-         * 
-         * @param index Index of the LEDs [0-1]
-         * @param r Red color. [0-255]
-         * @param g Green color [0-255]
-         * @param b Blue color [0-255]
-         * @return * void 
-         */
-        void setLED(int index, int r, int g, int b);
+    /**
+     * @brief Set the color of the L2 LED.
+     *
+     * @param r Red color. [0-255]
+     * @param g Green color [0-255]
+     * @param b Blue color [0-255]
+     * @return * void
+     */
+    void setL2(int r, int g, int b);
 
-        /**
-         * @brief Set the color of the L1 LED.
-         * 
-         * @param r Red color. [0-255]
-         * @param g Green color [0-255]
-         * @param b Blue color [0-255]
-         * @return * void 
-         */
-        void setL1(int r, int g, int b);
+    /**
+     * @brief Read the digital inputs of the IO board.
+     *
+     * @param pin Pin number [PIN_IN_1 .. 4]
+     * @return int Returns HIGH or LOW.
+     */
+    int digitalRead(int pin);
 
-        /**
-         * @brief Set the color of the L2 LED.
-         * 
-         * @param r Red color. [0-255]
-         * @param g Green color [0-255]
-         * @param b Blue color [0-255]
-         * @return * void 
-         */
-        void setL2(int r, int g, int b);
-        
-        /**
-         * @brief Read the digital inputs of the IO board.
-         * 
-         * @param pin Pin number [PIN_IN_1 .. 4]
-         * @return int Returns HIGH or LOW.
-         */
-        int digitalRead(int pin);
-
-        /**
-         * @brief Write to the relay outputs of the IO board.
-         * 
-         * @param pin Pin number [PIN_RELAY_1 .. 4]
-         * @param state HIGH or LOW
-         */
-        void digitalWrite(int pin, int state);
+    /**
+     * @brief Write to the relay outputs of the IO board.
+     *
+     * @param pin Pin number [PIN_RELAY_1 .. 4]
+     * @param state HIGH or LOW
+     */
+    void digitalWrite(int pin, int state);
 };
 
 #pragma endregion
@@ -291,7 +289,7 @@ class Made4Home_t
 
 /**
  * @brief Instance of the IO board abstraction.
- * 
+ *
  */
 extern Made4Home_t Made4Home;
 

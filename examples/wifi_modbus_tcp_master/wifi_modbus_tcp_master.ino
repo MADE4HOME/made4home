@@ -64,42 +64,42 @@ SOFTWARE.
 
 /**
  * @brief Default SSID.
- * 
+ *
  */
 char SSID_g[] = DEFAULT_SSID;
 
 /**
  * @brief Default password.
- * 
+ *
  */
 char PASS_g[] = DEFAULT_PASS;
 
 /**
  * @brief WiFi client.
- * 
+ *
  */
 WiFiClient WiFiClient_g;
 
 /**
- * @brief 
- * 
+ * @brief
+ *
  */
 IPAddress TargetIP_g;
 
 /**
  * @brief Create a ModbusTCP client instance.
- * 
+ *
  */
 ModbusClientTCP *ModbusClient_g;
 
-/** 
+/**
  * @brief Update timer instance.
  */
 FxTimer *UpdateTimer_g;
 
 /**
  * @brief Coil data.
- * 
+ *
  */
 CoilData CoilData_g(12);
 
@@ -109,13 +109,13 @@ CoilData CoilData_g(12);
 
 /**
  * @brief Connect to WiFi.
- * 
+ *
  */
 void connect_to_wifi();
 
 /**
  * @brief Define an onData handler function to receive the regular responses
- * 
+ *
  * @param response Received response message.
  * @param token Request's token.
  */
@@ -123,7 +123,7 @@ void handleData(ModbusMessage response, uint32_t token);
 
 /**
  * @brief Define an onError handler function to receive error responses
- * 
+ *
  * @param error Error code.
  * @param token User-supplied token to identify the causing request.
  */
@@ -135,10 +135,12 @@ void setup()
 {
     // Init Serial monitor
     Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
-    while (!Serial) {}
+    while (!Serial)
+    {
+    }
 
     Made4Home.setup();
-   
+
     // Connect to Wi-Fi network with SSID and password.
     connect_to_wifi();
 
@@ -174,17 +176,17 @@ void loop()
     static Error ErrorL;
 
     UpdateTimer_g->update();
-    if(UpdateTimer_g->expired())
+    if (UpdateTimer_g->expired())
     {
         UpdateTimer_g->updateLastTime();
         UpdateTimer_g->clear();
 
         // Issue the request
         ErrorL = ModbusClient_g->addRequest((uint32_t)millis(), MB_SLAVE_ID, READ_DISCR_INPUT, MB_REG_START, MB_REG_COUNT);
-        if (ErrorL!=SUCCESS)
+        if (ErrorL != SUCCESS)
         {
-          ModbusError e(ErrorL);
-          LOG_E("Error creating request: %02X - %s\n", (int)e, (const char *)e);
+            ModbusError e(ErrorL);
+            LOG_E("Error creating request: %02X - %s\n", (int)e, (const char *)e);
         }
 
         for (int index = 0; index < PINS_INPUTS_COUNT; index++)
@@ -199,10 +201,10 @@ void loop()
             WRITE_MULT_COILS,
             0, CoilData_g.coils(), CoilData_g.size(), CoilData_g.data());
 
-        if (ErrorL!=SUCCESS)
+        if (ErrorL != SUCCESS)
         {
-          ModbusError e(ErrorL);
-          LOG_E("Error creating request: %02X - %s\n", (int)e, (const char *)e);
+            ModbusError e(ErrorL);
+            LOG_E("Error creating request: %02X - %s\n", (int)e, (const char *)e);
         }
     }
 }
@@ -211,7 +213,7 @@ void loop()
 
 /**
  * @brief Connect to WiFi.
- * 
+ *
  */
 void connect_to_wifi()
 {
@@ -229,7 +231,7 @@ void connect_to_wifi()
     Serial.println(WiFi.localIP());
 }
 
-void handleResponse(ModbusMessage response, uint32_t token) 
+void handleResponse(ModbusMessage response, uint32_t token)
 {
     static uint8_t FunctionCodeL = 0;
     static uint8_t InputsL = 0;
@@ -243,7 +245,7 @@ void handleResponse(ModbusMessage response, uint32_t token)
         InputsL = response[3];
         Serial.printf("Inputs: %d", InputsL);
         Serial.println();
-      
+
         Made4Home.digitalWrite(0, (InputsL & 0x01) ? 1 : 0);
         Made4Home.digitalWrite(1, (InputsL & 0x02) ? 1 : 0);
         Made4Home.digitalWrite(2, (InputsL & 0x04) ? 1 : 0);
@@ -261,11 +263,11 @@ void handleResponse(ModbusMessage response, uint32_t token)
 
 /**
  * @brief Define an onError handler function to receive error responses
- * 
+ *
  * @param error Error code.
  * @param token User-supplied token to identify the causing request.
  */
-void handleError(Error error, uint32_t token) 
+void handleError(Error error, uint32_t token)
 {
     // ModbusError wraps the error code and provides a readable error message for it
     ModbusError ModbusErrorL(error);

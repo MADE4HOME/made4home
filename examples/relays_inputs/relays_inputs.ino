@@ -40,7 +40,7 @@ SOFTWARE.
 
 #pragma region Variables
 
-/** 
+/**
  * @brief Update timer instance.
  */
 FxTimer *UpdateTimer_g;
@@ -51,20 +51,22 @@ void setup()
 {
     // Run the UART.
     Serial.begin(DEFAULT_BAUDRATE, SERIAL_8N1);
-    while (!Serial) {}
+    while (!Serial)
+    {
+    }
 
     Made4Home.setup();
 
     // Setup the update timer.
     UpdateTimer_g = new FxTimer();
     UpdateTimer_g->setExpirationTime(UPDATE_INTERVAL_MS);
-    UpdateTimer_g->updateLastTime();  
+    UpdateTimer_g->updateLastTime();
 }
 
 void loop()
 {
     UpdateTimer_g->update();
-    if(UpdateTimer_g->expired())
+    if (UpdateTimer_g->expired())
     {
         UpdateTimer_g->updateLastTime();
         UpdateTimer_g->clear();

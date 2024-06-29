@@ -41,12 +41,12 @@ SOFTWARE.
 
 #pragma region Variables
 
-/** 
+/**
  * @brief Update timer instance.
  */
 FxTimer *UpdateTimer_g;
 
-/** 
+/**
  * @brief Blink LED state counter.
  */
 uint8_t State_g;
@@ -69,45 +69,45 @@ void setup()
 
 void loop()
 {
-  UpdateTimer_g->update();
-  if(UpdateTimer_g->expired())
-  {
-    UpdateTimer_g->updateLastTime();
-    UpdateTimer_g->clear();
+    UpdateTimer_g->update();
+    if (UpdateTimer_g->expired())
+    {
+        UpdateTimer_g->updateLastTime();
+        UpdateTimer_g->clear();
 
-    // set the LED with the State_g of the variable:
-    if (State_g == 0)
-    {
-        Made4Home.setL1(0, 0, 0);
-        Made4Home.setL2(0, 0, 0);
-    }
-    else if (State_g == 1)
-    {
-        Made4Home.setL1(BRIGHTNESS, 0, 0);
-        Made4Home.setL2(BRIGHTNESS, 0, 0);
-    }
-    else if (State_g == 2)
-    {
-        Made4Home.setL1(0, BRIGHTNESS, 0);
-        Made4Home.setL2(0, BRIGHTNESS, 0);
-    }
-    else if (State_g == 3)
-    {
-        Made4Home.setL1(0, 0, BRIGHTNESS);
-        Made4Home.setL2(0, 0, BRIGHTNESS);
-    }
-    else if (State_g == 4)
-    {
-        Made4Home.setL1(BRIGHTNESS, BRIGHTNESS, BRIGHTNESS);
-        Made4Home.setL2(BRIGHTNESS, BRIGHTNESS, BRIGHTNESS);
-    }
-    else
-    {
-        Made4Home.setL1(0, 0, 0);
-        Made4Home.setL2(0, 0, 0);
-        State_g = 0;
-    }
+        // set the LED with the State_g of the variable:
+        if (State_g == 0)
+        {
+            Made4Home.setL1(0, 0, 0);
+            Made4Home.setL2(0, 0, 0);
+        }
+        else if (State_g == 1)
+        {
+            Made4Home.setL1(BRIGHTNESS, 0, 0);
+            Made4Home.setL2(BRIGHTNESS, 0, 0);
+        }
+        else if (State_g == 2)
+        {
+            Made4Home.setL1(0, BRIGHTNESS, 0);
+            Made4Home.setL2(0, BRIGHTNESS, 0);
+        }
+        else if (State_g == 3)
+        {
+            Made4Home.setL1(0, 0, BRIGHTNESS);
+            Made4Home.setL2(0, 0, BRIGHTNESS);
+        }
+        else if (State_g == 4)
+        {
+            Made4Home.setL1(BRIGHTNESS, BRIGHTNESS, BRIGHTNESS);
+            Made4Home.setL2(BRIGHTNESS, BRIGHTNESS, BRIGHTNESS);
+        }
+        else
+        {
+            Made4Home.setL1(0, 0, 0);
+            Made4Home.setL2(0, 0, 0);
+            State_g = 0;
+        }
 
-    State_g++;
-  }
+        State_g++;
+    }
 }
